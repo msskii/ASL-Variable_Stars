@@ -7,7 +7,7 @@ Created on Wed Jan 18 23:07:21 2023
 """
 
 import numpy as np
-from badpixelinterpolation.py import badpixelinterpolation
+from badpixelinterpolation import badpixelinterpolation
 
 def masterflatnormed(flat_data, dark_data, badpixelmap):
     masterflatbad = np.median(flat_data-dark_data, axis=0)

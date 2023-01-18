@@ -6,7 +6,7 @@ Created on Wed Jan 18 22:39:02 2023
 @author: Gian
 """
 import numpy as np
-from badpixelinterpolation.py import badpixelinterpolation
+from badpixelinterpolation import badpixelinterpolation
 
 def masterdark(data):
     '''given a numpy array of dark frames the masterdark is returned'''
