@@ -52,19 +52,10 @@ for i in range(len(Fits)):
     for j in np.arange(len(filenames)):
        fits_data[j] = fits.getdata(data_path + filenames[i],ext=0)
        fits_head[j] = fits.getheader(data_path + filenames[i],ext=0)
-   data[i] = fits_data
-   head[i] = fits_head
+    data[i] = fits_data
+    head[i] = fits_head
 
-
-# total path is userspecific+data path
-filenames = os.listdir(data_path)
-filenames.sort()
-
-data = np.zeros((len(filenames),4096,4096)) # img size has to be edited
-head = np.zeros(len(filenames),dtype=object)
-for i in np.arange(len(filenames)):
-    data[i] = fits.getdata(data_path + filenames[i],ext=0)
-    head[i] = fits.getheader(data_path + filenames[i],ext=0)
+# data[i] is list of Dark, Flat, or Science Frames according to Enum index
 
 #temporary variables; to be removed later
 #in the next three sections the function input names have to be changed accordingly
