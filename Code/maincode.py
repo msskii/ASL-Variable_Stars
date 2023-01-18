@@ -7,11 +7,11 @@ Created on Wed Jan 18 18:52:37 2023
 """
 import numpy as np
 # Steps in data reduction:
-#   import .fit data
-#   make master dark and master flat
-#   make bad pixel map
-#   remove bad pixels from frames
-#   dark subtraction and flat division
+#   import .fit data (done)
+#   make master dark and master flat (done)
+#   make bad pixel map (done)
+#   remove bad pixels from frames (done)
+#   dark subtraction and flat division (done)
 #   (cosmic ray rejection)
 #   background subtraction
 #   astrometric calibration
