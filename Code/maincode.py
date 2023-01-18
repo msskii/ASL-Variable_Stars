@@ -23,8 +23,10 @@ import numpy as np
 import os
 from astropy.io import fits
 
-data_path = '/Users/Gian/Documents/ASL Telescope/SFR_experiment_Laxhuber_Klasovita_copy/'
-processed_path = '/Users/Gian/Documents/ASL Telescope/SFR_processed/'
+userspecific_data_path = '/Users/Gian/Documents/'
+data_path = 'Github/ASL-Variable_Stars/data/'
+processed_path = 'Github/ASL-Variable_Stars/processed_data/'
+# total path is userspecific+data path
 filenames = os.listdir(data_path)
 filenames.sort()
 
