@@ -23,9 +23,15 @@ import numpy as np
 import os
 from astropy.io import fits
 
-userspecific_data_path = '/Users/Gian/Documents/'
-data_path = 'Github/ASL-Variable_Stars/data/'
-processed_path = 'Github/ASL-Variable_Stars/processed_data/'
+script_path = os.path.dirname(os.path.realpath(__file__))
+data_path = os.path.join(script_path, os.pardir, 'data')
+
+filenames = os.listdir(data_path)
+filenames.sort()
+
+print(filenames)
+
+
 # total path is userspecific+data path
 filenames = os.listdir(data_path)
 filenames.sort()
@@ -35,5 +41,3 @@ head = np.zeros(len(filenames),dtype=object)
 for i in np.arange(len(filenames)):
     data[i] = fits.getdata(data_path + filenames[i],ext=0)
     head[i] = fits.getheader(data_path + filenames[i],ext=0)
-
-
