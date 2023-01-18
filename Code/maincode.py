@@ -43,13 +43,24 @@ for i in np.arange(len(filenames)):
     head[i] = fits.getheader(data_path + filenames[i],ext=0)
 
 #temporary variables; to be removed later
-dark = 0
-flat = 0
+#in the next three sections the function input names have to be changed accordingly
+dark_data = 0
+flat_data = 0
 dat = 0
 ####
+# create badpixelmap (array with 0 if pixel can be used and 1 if not)
+from badpixelmapping import badpixelmapping
+badpixelmap = badpixelmapping(flat_data,dark_data)
+
+# create masterdark and masterflat
 from masterdark import masterdark
 from masterflatnormed import masterflatnormed
-mstrdark = masterdark(dark)
-mstrflatn = masterflatnormed(flat,dark)
+mstrdark = masterdark(dark_data)
+mstrflatn = masterflatnormed(flat_data,dark_data)
 
+# dark subtraction, flat division and badpixel removal
+from badpixelinterpolation import badpixelinterpolation
+from darkflatsubtraction import darkflatsubtraction
+good_data = badpixelinterpolation(dat,badpixelmap)
+science_data = darkflatsubtraction(good_data,mstrdark,mstrflatn)
 

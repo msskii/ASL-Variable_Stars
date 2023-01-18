@@ -13,7 +13,7 @@ def badpixelmapping(flat_data, dark_data):
     masterflat = np.median(flat_data-dark_data, axis=0)
     flatavg = np.sum(masterflat/masterflat.size)
     flatsig = np.sqrt(np.sum((masterflat-np.sum(masterflat)/masterflat.size)**2)/masterflat.size)
-    badpixelmap = masterflat < flatavg-5*flatsig
+    badpixelmap = np.invert(np.invert(masterflat < flatavg-5*flatsig) * np.invert(masterflat > flatavg + 5*flatsig))
     return badpixelmap
 
 

@@ -8,7 +8,8 @@ Created on Wed Jan 18 22:39:02 2023
 import numpy as np
 from badpixelinterpolation import badpixelinterpolation
 
-def masterdark(data):
+def masterdark(data,badpixelmap):
     '''given a numpy array of dark frames the masterdark is returned'''
-    mstdark = np.median(data, axis=0)
+    gooddata = badpixelinterpolation(data,badpixelmap)
+    mstdark = np.median(gooddata, axis=0)
     return mstdark
