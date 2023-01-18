@@ -10,7 +10,7 @@ import numpy as np
 from badpixelinterpolation import badpixelinterpolation
 from badpixelmapping import badpixelmapping
 
-def masterflatnormed(flat_data, dark_data, badpixelmap):
+def masterflatnormed(flat_data, dark_data):
     ''' outputs the normed masterflat given raw flat and dark data.
     also includes badpixel removal '''
     badpixelmap = badpixelmapping(flat_data,dark_data)

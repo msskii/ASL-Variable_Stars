@@ -41,3 +41,15 @@ head = np.zeros(len(filenames),dtype=object)
 for i in np.arange(len(filenames)):
     data[i] = fits.getdata(data_path + filenames[i],ext=0)
     head[i] = fits.getheader(data_path + filenames[i],ext=0)
+
+#temporary variables; to be removed later
+dark = 0
+flat = 0
+dat = 0
+####
+from masterdark import masterdark
+from masterflatnormed import masterflatnormed
+mstrdark = masterdark(dark)
+mstrflatn = masterflatnormed(flat,dark)
+
+
