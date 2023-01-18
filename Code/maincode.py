@@ -23,13 +23,37 @@ import numpy as np
 import os
 from astropy.io import fits
 
+class Fits(Enum):
+    Darks_4s = 0
+    Darks_10s = 1
+    Flats_0dot5s = 2
+    Flats_10s = 3
+    TV_Lyn = 4
+    W_Uma = 5
+
+paths = ["01 - Darks/4 Seconds", "01 - Darks/10 Seconds", "02 - Flats/5 Seconds", "02 - Flats/10 Seconds", "03 - Measurements/01 - TV Lyn", "03 - Measurements/02 - W U"]
+
 script_path = os.path.dirname(os.path.realpath(__file__))
 data_path = os.path.join(script_path, os.pardir, 'data')
 
-filenames = os.listdir(data_path)
-filenames.sort()
 
-print(filenames)
+data = np.zeros(len(Fits), dtype=object)
+head = np.zeros(len(Fits),dtype=object)
+
+for i in range(len(Fits)):
+    FITpath = os.path.join(data_path, paths[i])
+    print("-------------------")
+    print(FITpath)
+    filenames = os.listdir(FITpath)
+    filenames.sort()
+    fits_data = np.zeros((len(filenames),3500,4500))
+    fits_head = np.zeros(len(filenames),dtype=object)
+    print(filenames)
+    for j in np.arange(len(filenames)):
+       fits_data[j] = fits.getdata(data_path + filenames[i],ext=0)
+       fits_head[j] = fits.getheader(data_path + filenames[i],ext=0)
+   data[i] = fits_data
+   head[i] = fits_head
 
 
 # total path is userspecific+data path
@@ -63,4 +87,3 @@ from badpixelinterpolation import badpixelinterpolation
 from darkflatsubtraction import darkflatsubtraction
 good_data = badpixelinterpolation(dat,badpixelmap)
 science_data = darkflatsubtraction(good_data,mstrdark,mstrflatn)
-
