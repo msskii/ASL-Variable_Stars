@@ -22,6 +22,7 @@ import numpy as np
 # import .fit data
 import os
 from astropy.io import fits
+from enum import Enum
 
 class Fits(Enum):
     Darks_4s = 0
@@ -55,16 +56,6 @@ for i in range(len(Fits)):
    data[i] = fits_data
    head[i] = fits_head
 
-
-# total path is userspecific+data path
-filenames = os.listdir(data_path)
-filenames.sort()
-
-data = np.zeros((len(filenames),4096,4096)) # img size has to be edited
-head = np.zeros(len(filenames),dtype=object)
-for i in np.arange(len(filenames)):
-    data[i] = fits.getdata(data_path + filenames[i],ext=0)
-    head[i] = fits.getheader(data_path + filenames[i],ext=0)
 
 #temporary variables; to be removed later
 #in the next three sections the function input names have to be changed accordingly
