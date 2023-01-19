@@ -30,11 +30,12 @@ class Fits(Enum):
     Darks_10s = 1
     Flats_0dot5s = 2
     Flats_10s = 3
-    TV_Lyn = 4
-    W_Uma = 5
+    TV_Lyn_4s = 4
+    TV_Lyn_10s = 5
+    W_Uma = 6
 # we take 10s flats and ignore the .5s ones
 
-paths = ["01 - Darks/4 Seconds", "01 - Darks/10 Seconds", "02 - Flats/5 Seconds", "02 - Flats/10 Seconds", "03 - Measurements/01 - TV Lyn", "03 - Measurements/02 - W Uma"]
+paths = ["01 - Darks/4 Seconds", "01 - Darks/10 Seconds", "02 - Flats/5 Seconds", "02 - Flats/10 Seconds", "03 - Measurements/01 - TV Lyn/4s", "03 - Measurements/01 - TV Lyn/10s", "03 - Measurements/02 - W Uma"]
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 data_path = os.path.join(script_path, os.pardir, 'data')
@@ -63,12 +64,6 @@ for i in range(len(Fits)):
 
 print(time.time() - start)
 
-#temporary variables; to be removed later
-#in the next three sections the function input names have to be changed accordingly
-dark_data = 0
-flat_data = 0
-dat = 0
-####
 # create badpixelmap (array with 0 if pixel can be used and 1 if not)
 from badpixelmapping import badpixelmapping
 badpixelmap = badpixelmapping(data[3],data[1])
@@ -80,6 +75,7 @@ print("done Badpixel", time.time() - start)
 from masterdark import masterdark
 from masterflatnormed import masterflatnormed
 mstrdark_4s = masterdark(data[0],badpixelmap)
+mstrdark_10s = masterdark(data[1],badpixelmap)
 mstrflatn = masterflatnormed(data[3],data[1])
 
 print("done Masterflat", time.time() - start)
@@ -87,7 +83,14 @@ print("done Masterflat", time.time() - start)
 # dark subtraction, flat division and badpixel removal
 from badpixelinterpolation import badpixelinterpolation
 from darkflatsubtraction import darkflatsubtraction
-good_data = badpixelinterpolation(dat,badpixelmap)
-science_data = darkflatsubtraction(good_data,mstrdark,mstrflatn)
+good_TVLyn_4s = np.zeros(data[4].shape)
+good_TVLyn_10s = np.zeros(data[5].shape)
+for i in np.arange(data[4][:,0,0].size):
+    good_TVLyn_4s[i] = badpixelinterpolation(data[4][i],badpixelmap)
+for i in np.arange(data[5][:,0,0].size):
+    good_TVLyn_10s[i] = badpixelinterpolation(data[5][i],badpixelmap)
+
+science_TVLyn_4s = darkflatsubtraction(good_TVLyn_4s,mstrdark_4s,mstrflatn)
+science_TVLyn_10s = darkflatsubtraction(good_TVLyn_10s,mstrdark_10s,mstrflatn)
 
 print("done badpixelinterpolation", time.time() - start)
