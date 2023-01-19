@@ -11,15 +11,12 @@ import Fits_reader as fr
 def flat():
     flat_data = fr.reader(1)
     dark_data = fr.reader(3)
-    flat_data -= dark_data
-    print("subdone")
+    numpy.subtract(flat_data, dark_data, out=flat_data)
     return np.median(flat_data, axis=0)
 
 def badpixelmapping():
     masterflat = flat()
-    print(masterflat.shape)
     flatavg = np.mean(masterflat)
-    print(flatavg.shape)
     flatsig = np.sqrt(np.sum((masterflat-np.sum(masterflat)/masterflat.size)**2)/masterflat.size)
     badpixelmap = np.invert(np.invert(masterflat < flatavg-5*flatsig) * np.invert(masterflat > flatavg + 5*flatsig))
     return badpixelmap

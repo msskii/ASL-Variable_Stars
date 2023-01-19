@@ -6,10 +6,39 @@ Created on Wed Dec 21 19:12:34 2022
 @author: Gian
 """
 import numpy as np
+import warnings
+import time
+
+x0 = [-1,-1,-1,0,0,1,1,1]
+y0 = [-1,0,1,-1,1,-1,0,1]
 
 def badpixelinterpolation(data,badpixelmap):
+    start = time.time()
+    Bx,By = np.where(badpixelmap)
+    xbound = badpixelmap[:,0].size
+    ybound = badpixelmap[0,:].size
+
+    for x,y in zip(Bx,By):
+        pixels = 0
+        value = 0
+        for dx,dy in zip(x0,y0):
+            if(x+dx >= 0 and x+dx <= xbound and y+dy >= 0 and y+dy <= ybound):
+                if(not badpixelmap[x+dx,y+dy]):
+                    pixels += 1
+                    value += data[x+dx,y+dy]
+        if(pixels == 0):
+            warnings.warn("Too many bad badpixels")
+            pixels = 1
+        data[x,y] = (value / pixels)
+    print(time.time() - start)
+    return  data
+
+
+
+
+def badpixelinterpolationOld(data,badpixelmap):
     '''given a frame (data) containing badpixels (badpixelmap),
-    the function outputs the same frame with the badpixels excluded and 
+    the function outputs the same frame with the badpixels excluded and
     replaced with data interpolated from the closest surrounding non-bad pixels.'''
     x,y = np.where(badpixelmap)
     new = data.copy()
@@ -39,10 +68,10 @@ def badpixelinterpolation(data,badpixelmap):
                             savey = np.append(savey,np.array([k]))
             layer = layer + 1
             if not count < 2:
-                    foundinterpol = True           
+                    foundinterpol = True
         interpolations = np.array([])
         for l in np.arange(savex.size):
-            interpolations = np.append(interpolations,data[int(savex[l]),int(savey[l])])              
+            interpolations = np.append(interpolations,data[int(savex[l]),int(savey[l])])
         new[n,m] = np.sum(interpolations)/interpolations.size
     return new
 

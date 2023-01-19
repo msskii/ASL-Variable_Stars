@@ -18,11 +18,18 @@ paths = [os.path.join("01 - Darks", "4 Seconds"),os.path.join("01 - Darks", "10 
 script_path = os.path.dirname(os.path.realpath(__file__))
 data_path = os.path.join(script_path, os.pardir, 'data')
 
+def listdir_nohidden(path):
+    files = list()
+    for f in os.listdir(path):
+        if not f.startswith('.'):
+            files.append(f)
+    return files
 
 def reader(i):
     FITpath = os.path.join(data_path, paths[i])
-    filenames = os.listdir(FITpath)
+    filenames = listdir_nohidden(FITpath)
     filenames.sort()
+    print(filenames)
     fits_data = np.zeros((len(filenames),3600,4500))
     #fits_head = np.zeros(len(filenames),dtype=object)
     for j in np.arange(len(filenames)):
