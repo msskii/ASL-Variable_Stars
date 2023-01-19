@@ -13,7 +13,7 @@ import numpy as np
 #   remove bad pixels from frames (done)
 #   dark subtraction and flat division (done)
 #   (cosmic ray rejection)
-#   background subtraction
+#   background subtraction (done)
 #   astrometric calibration
 #   photometric calibration
 
