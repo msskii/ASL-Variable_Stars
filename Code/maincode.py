@@ -76,7 +76,7 @@ badpixelmap = badpixelmapping(data[3],data[1])
 # create masterdark and masterflat
 from masterdark import masterdark
 from masterflatnormed import masterflatnormed
-mstrdark_4s = masterdark(data[0])
+mstrdark_4s = masterdark(data[0],badpixelmap)
 mstrflatn = masterflatnormed(data[3],data[1])
 
 # dark subtraction, flat division and badpixel removal

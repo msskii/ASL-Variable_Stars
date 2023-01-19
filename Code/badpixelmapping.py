@@ -11,7 +11,7 @@ def badpixelmapping(flat_data, dark_data):
     '''takes flat data (and dark data) from ccd and identifies outliers
     (5 sigma) that should be excluded in the science frames'''
     masterflat = np.median(flat_data-dark_data, axis=0)
-    flatavg = np.sum(masterflat/masterflat.size)
+    flatavg = np.mean(masterflat)
     flatsig = np.sqrt(np.sum((masterflat-np.sum(masterflat)/masterflat.size)**2)/masterflat.size)
     badpixelmap = np.invert(np.invert(masterflat < flatavg-5*flatsig) * np.invert(masterflat > flatavg + 5*flatsig))
     return badpixelmap
