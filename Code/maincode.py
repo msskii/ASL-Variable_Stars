@@ -48,15 +48,14 @@ print("done Masterflat", time.time() - start)
 # dark subtraction, flat division and badpixel removal
 from badpixelinterpolation import badpixelinterpolation, multiplebadinterpol
 from darkflatsubtraction import darkflatsubtraction
+
 good_TVLyn_4s = multiplebadinterpol(4, badpixelmap)
 good_TVLyn_10s = multiplebadinterpol(5, badpixelmap)
 
 ####### badpixel to be fixed
-### change TVLyn data names to good_TVLyn after bad pixel has been done in the darkflatsubtraction section (replace data 4 and data 5!
 
-science_TVLyn_4s = darkflatsubtraction(4,mstrdark_4s,mstrflatn)
-science_TVLyn_10s = darkflatsubtraction(5,mstrdark_10s,mstrflatn)
-#### edit above lines
+science_TVLyn_4s = darkflatsubtraction(good_TVLyn_4s,mstrdark_4s,mstrflatn)
+science_TVLyn_10s = darkflatsubtraction(good_TVLyn_10s,mstrdark_10s,mstrflatn)
 
 print("done badpixelinterpolation", time.time() - start)
 
@@ -67,5 +66,5 @@ print("done badpixelinterpolation", time.time() - start)
 # variable sigclip can be added (default 4.5), lower values will flag more pixels as cosmic rays
 
 # background subtraction
-from background_subtraction import background_subtraction
-science_TVLyn_4s_nobkg = background_subtraction(science_TVLyn_4s)
+science_TVLyn_4s_nobkg = subtract_background(science_TVLyn_4s)
+science_TVLyn_10s_nobkg = subtract_background(science_TVLyn_10s)
