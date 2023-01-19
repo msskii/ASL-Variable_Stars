@@ -22,6 +22,7 @@ import numpy as np
 # import .fit data
 import time
 from astropy.io import fits
+import Fits_reader as fr
 
 
 
@@ -56,14 +57,14 @@ from darkflatsubtraction import darkflatsubtraction
 ####### badpixel to be fixed
 ### change TVLyn data names to good_TVLyn after bad pixel has been done in the darkflatsubtraction section (replace data 4 and data 5!
 
-science_TVLyn_4s = darkflatsubtraction(data[4],mstrdark_4s,mstrflatn)
-science_TVLyn_10s = darkflatsubtraction(data[5],mstrdark_10s,mstrflatn)
+science_TVLyn_4s = darkflatsubtraction(4,mstrdark_4s,mstrflatn)
+science_TVLyn_10s = darkflatsubtraction(5,mstrdark_10s,mstrflatn)
 #### edit above lines
 
 print("done badpixelinterpolation", time.time() - start)
 
 # cosmic ray rejection
-from cosmicrayrejection import cosmicrayrejection
-science_TVLyn_4s_nocosm = cosmicrayrejection(science_TVLyn_4s,badpixelmap)
-science_TVLyn_10s_nocosm = cosmicrayrejection(science_TVLyn_10s,badpixelmap)
+# from cosmicrayrejection import cosmicrayrejection
+# science_TVLyn_4s_nocosm = cosmicrayrejection(science_TVLyn_4s,badpixelmap)
+# science_TVLyn_10s_nocosm = cosmicrayrejection(science_TVLyn_10s,badpixelmap)
 #variable sigclip can be added (default 4.5), lower values will flag more pixels as cosmic rays
