@@ -20,10 +20,8 @@ import numpy as np
 ##########################################
 
 # import .fit data
-import os
 import time
 from astropy.io import fits
-import Fits_reader
 
 
 
@@ -40,9 +38,9 @@ print("done Badpixel", time.time() - start)
 from masterdark import masterdark
 from masterflatnormed import masterflatnormed
 mstrdark_4s = masterdark(0,badpixelmap)
-mstrdark_4s = masterdark(1,badpixelmap)
+mstrdark_10s = masterdark(1,badpixelmap)
 
-mstrflatn = masterflatnormed(data[3],data[1])
+mstrflatn = masterflatnormed(3, 1, badpixelmap)
 
 print("done Masterflat", time.time() - start)
 

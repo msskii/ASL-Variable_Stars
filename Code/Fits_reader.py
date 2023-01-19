@@ -1,6 +1,7 @@
 import numpy as np
 from astropy.io import fits
 from enum import Enum
+import os
 
 class Fits(Enum):
     Darks_4s = 0
@@ -22,8 +23,8 @@ def reader(i):
     filenames = os.listdir(FITpath)
     filenames.sort()
     fits_data = np.zeros((len(filenames),3600,4500))
-    fits_head = np.zeros(len(filenames),dtype=object)
+    #fits_head = np.zeros(len(filenames),dtype=object)
     for j in np.arange(len(filenames)):
        fits_data[j] = fits.getdata(os.path.join(FITpath, filenames[i]),ext=0)
-       fits_head[j] = fits.getheader(os.path.join(FITpath, filenames[i]),ext=0)
-    return fits_data, fits_head
+       #fits_head[j] = fits.getheader(os.path.join(FITpath, filenames[i]),ext=0)
+    return fits_data

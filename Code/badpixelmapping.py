@@ -8,13 +8,18 @@ Created on Wed Jan 18 22:51:14 2023
 import numpy as np
 import Fits_reader as fr
 
-def badpixelmapping():
+def flat():
     flat_data = fr.reader(1)
     dark_data = fr.reader(3)
-    '''takes flat data (and dark data) from ccd and identifies outliers
-    (5 sigma) that should be excluded in the science frames'''
-    masterflat = np.median(flat_data-dark_data, axis=0)
+    flat_data -= dark_data
+    print("subdone")
+    return np.median(flat_data, axis=0)
+
+def badpixelmapping():
+    masterflat = flat()
+    print(masterflat.shape)
     flatavg = np.mean(masterflat)
+    print(flatavg.shape)
     flatsig = np.sqrt(np.sum((masterflat-np.sum(masterflat)/masterflat.size)**2)/masterflat.size)
     badpixelmap = np.invert(np.invert(masterflat < flatavg-5*flatsig) * np.invert(masterflat > flatavg + 5*flatsig))
     return badpixelmap
