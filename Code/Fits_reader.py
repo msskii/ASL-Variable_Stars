@@ -18,6 +18,7 @@ paths = [os.path.join("01 - Darks", "4 Seconds"),os.path.join("01 - Darks", "10 
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 data_path = os.path.join(script_path, os.pardir, 'data')
+data_write = os.path.join(script_path, os.pardir, 'data', '04 - Edited Images')
 
 def listdir_nohidden(path):
     files = list()
@@ -30,10 +31,14 @@ def reader(i):
     FITpath = os.path.join(data_path, paths[i])
     filenames = listdir_nohidden(FITpath)
     filenames.sort()
-    #print(filenames)
+    print(filenames)
     fits_data = np.zeros((len(filenames),3600,4500))
     #fits_head = np.zeros(len(filenames),dtype=object)
     for j in np.arange(len(filenames)):
        fits_data[j] = fits.getdata(os.path.join(FITpath, filenames[j]),ext=0)
        #fits_head[j] = fits.getheader(os.path.join(FITpath, filenames[i]),ext=0)
     return fits_data
+
+def writer(data, path):
+    write_to = os.path.join(data_write, path)
+    astropy.io.fits.writeto(write_to, data)
