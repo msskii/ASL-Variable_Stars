@@ -12,7 +12,7 @@ import numpy as np
 #   make bad pixel map (done)
 #   remove bad pixels from frames (done)
 #   dark subtraction and flat division (done)
-#   (cosmic ray rejection)
+#   cosmic ray rejection
 #   background subtraction
 #   astrometric calibration
 #   photometric calibration
@@ -69,7 +69,9 @@ dat = 0
 ####
 # create badpixelmap (array with 0 if pixel can be used and 1 if not)
 from badpixelmapping import badpixelmapping
-badpixelmap = badpixelmapping(flat_data,dark_data)
+badpixelmap0_5s = 0#badpixelmapping(flat_data,dark_data) #add this if dark 0.5s have been done
+badpixelmap10s = badpixelmapping(data[3],data[1])
+badpixelmap = np.invert(np.invert(badpixelmap0_5s) * np.invert(badpixelmap10s))
 
 # create masterdark and masterflat
 from masterdark import masterdark
