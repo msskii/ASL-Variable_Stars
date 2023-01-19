@@ -11,7 +11,7 @@ import Fits_reader as fr
 def flat():
     flat_data = fr.reader(1)
     dark_data = fr.reader(3)
-    numpy.subtract(flat_data, dark_data, out=flat_data)
+    np.subtract(flat_data, dark_data, out=flat_data)
     return np.median(flat_data, axis=0)
 
 def badpixelmapping():

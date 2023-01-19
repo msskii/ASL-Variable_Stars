@@ -34,6 +34,6 @@ def reader(i):
     fits_data = np.zeros((len(filenames),3600,4500))
     #fits_head = np.zeros(len(filenames),dtype=object)
     for j in np.arange(len(filenames)):
-       fits_data[j] = fits.getdata(os.path.join(FITpath, filenames[i]),ext=0)
+       fits_data[j] = fits.getdata(os.path.join(FITpath, filenames[j]),ext=0)
        #fits_head[j] = fits.getheader(os.path.join(FITpath, filenames[i]),ext=0)
     return fits_data
