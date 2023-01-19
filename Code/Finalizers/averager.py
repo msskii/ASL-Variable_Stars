@@ -4,6 +4,8 @@ import os
 
 
 def average_write(target_measurement):
+    """Takes aligned images of target measurement and averages to yield one corrected picture."""
+
     filter = lambda lst: [x for x in lst if x.startswith("mes") and x.count("_") == 3]
 
     source_dir = "../data/04 - Edited Images/" + target_measurement + "/Aligned/"

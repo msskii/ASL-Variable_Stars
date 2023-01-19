@@ -11,6 +11,5 @@ def subtract_background(data):
     for i in np.arange(data[:,0,0].size):
         bkg = Background2D(data, (50, 50), filter_size=(3, 3), sigma_clip=sigma_clip, bkg_estimator=bkg_estimator)
         ret[i] = data - bkg.background
-    
-    
+
     return ret

@@ -5,6 +5,8 @@ Created on Wed Jan 18 18:52:37 2023
 
 @author: Gian
 """
+import os
+
 import numpy as np
 # Steps in data reduction:
 #   import .fit data (done)
@@ -69,3 +71,15 @@ print("done badpixelinterpolation", time.time() - start)
 from background_subtraction import subtract_background
 science_TVLyn_4s_nobkg = subtract_background(science_TVLyn_4s)
 science_TVLyn_10s_nobkg = subtract_background(science_TVLyn_10s)
+
+headers_4 = fr.read_headers(4)
+headers_10 = fr.read_headers(5)
+
+for d4, d10, h4, h10 in zip(science_TVLyn_4s_nobkg, science_TVLyn_10s_nobkg, headers_4, headers_10):
+    fr.writer(d4, os.path.join("01 - TV Lyn", "4s"), h4)
+    fr.writer(d10, os.path.join("01 - TV Lyn", "10s"), h10)
+
+from Finalizers.aligner import align_write
+align_write("01 - TV Lyn/4s")
+align_write("01 - TV Lyn/10s")
+
