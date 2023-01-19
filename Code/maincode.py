@@ -46,14 +46,11 @@ mstrflatn = masterflatnormed(3, 1, badpixelmap)
 print("done Masterflat", time.time() - start)
 
 # dark subtraction, flat division and badpixel removal
-from badpixelinterpolation import badpixelinterpolation
+from badpixelinterpolation import badpixelinterpolation, multiplebadinterpol
 from darkflatsubtraction import darkflatsubtraction
-# good_TVLyn_4s = np.zeros(data[4].shape)
-# good_TVLyn_10s = np.zeros(data[5].shape)
-# for i in np.arange(data[4][:,0,0].size):
-#     good_TVLyn_4s[i] = badpixelinterpolation(data[4][i],badpixelmap)
-# for i in np.arange(data[5][:,0,0].size):
-#     good_TVLyn_10s[i] = badpixelinterpolation(data[5][i],badpixelmap)
+good_TVLyn_4s = multiplebadinterpol(4, badpixelmap)
+good_TVLyn_10s = multiplebadinterpol(5, badpixelmap)
+
 ####### badpixel to be fixed
 ### change TVLyn data names to good_TVLyn after bad pixel has been done in the darkflatsubtraction section (replace data 4 and data 5!
 
@@ -72,6 +69,3 @@ print("done badpixelinterpolation", time.time() - start)
 # background subtraction
 from background_subtraction import background_subtraction
 science_TVLyn_4s_nobkg = background_subtraction(science_TVLyn_4s)
-
-
-

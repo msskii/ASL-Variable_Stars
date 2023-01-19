@@ -12,7 +12,8 @@ import time
 x0 = [-1,-1,-1,0,0,1,1,1]
 y0 = [-1,0,1,-1,1,-1,0,1]
 
-def badpixelinterpolation(data,badpixelmap):
+
+def badpixelinterpolation(data, badpixelmap):
     start = time.time()
     Bx,By = np.where(badpixelmap)
     xbound = badpixelmap[:,0].size
@@ -33,6 +34,12 @@ def badpixelinterpolation(data,badpixelmap):
     print(time.time() - start)
     return  data
 
+def multiplebadinterpol(data_index, badpixelmap):
+    data = fr.reader(data_index)
+    ret = np.zeros(data[4].shape)
+    for i in np.arange(data[:,0,0].size):
+        ret[i] = badpixelinterpolation(data[i],badpixelmap)
+    return ret
 
 
 
