@@ -55,11 +55,9 @@ for i in np.arange(data[4][:,0,0].size):
 for i in np.arange(data[5][:,0,0].size):
     good_TVLyn_10s[i] = badpixelinterpolation(data[5][i],badpixelmap)
 ####### badpixel to be fixed
-### change TVLyn data names to good_TVLyn after bad pixel has been done in the darkflatsubtraction section (replace data 4 and data 5!
 
-science_TVLyn_4s = darkflatsubtraction(4,mstrdark_4s,mstrflatn)
-science_TVLyn_10s = darkflatsubtraction(5,mstrdark_10s,mstrflatn)
-#### edit above lines
+science_TVLyn_4s = darkflatsubtraction(good_TVLyn_4s,mstrdark_4s,mstrflatn)
+science_TVLyn_10s = darkflatsubtraction(good_TVLyn_10s,mstrdark_10s,mstrflatn)
 
 print("done badpixelinterpolation", time.time() - start)
 
