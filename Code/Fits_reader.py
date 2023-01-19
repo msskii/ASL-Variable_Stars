@@ -8,12 +8,13 @@ class Fits(Enum):
     Darks_10s = 1
     Flats_0dot5s = 2
     Flats_10s = 3
-    TV_Lyn = 4
-    W_Uma = 5
-    Special = 6
+    TV_Lyn_4s = 4
+    TV_Lyn_10s = 5
+    W_Uma = 6
+    Special = 7
 # we take 10s flats and ignore the .5s ones
 
-paths = [os.path.join("01 - Darks", "4 Seconds"),os.path.join("01 - Darks", "10 Seconds"), os.path.join("02 - Flats", "5 Seconds"), os.path.join("02 - Flats", "10 Seconds"), os.path.join("03 - Measurements","01 - TV Lyn"), os.path.join("03 - Measurements","02 - W Uma"),"XX - Special"]
+paths = [os.path.join("01 - Darks", "4 Seconds"),os.path.join("01 - Darks", "10 Seconds"), os.path.join("02 - Flats", "5 Seconds"), os.path.join("02 - Flats", "10 Seconds"), os.path.join("03 - Measurements","01 - TV Lyn","4s"), os.path.join("03 - Measurements","01 - TV Lyn","10s") os.path.join("03 - Measurements","02 - W Uma"),"XX - Special"]
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 data_path = os.path.join(script_path, os.pardir, 'data')
