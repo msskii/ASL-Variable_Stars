@@ -103,3 +103,5 @@ from cosmicrayrejection import cosmicrayrejection
 science_TVLyn_4s_nocosm = cosmicrayrejection(science_TVLyn_4s,badpixelmap)
 science_TVLyn_10s_nocosm = cosmicrayrejection(science_TVLyn_10s,badpixelmap)
 #variable sigclip can be added (default 4.5), lower values will flag more pixels as cosmic rays
+
+
