@@ -26,3 +26,5 @@ def star_position (data, sigma):
     peaks = [find_peaks(data[i], thresholds[i]) for i in sigma.size()]
     
     return peaks
+
+print (x)
