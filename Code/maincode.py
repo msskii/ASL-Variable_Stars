@@ -32,6 +32,7 @@ class Fits(Enum):
     Flats_10s = 3
     TV_Lyn = 4
     W_Uma = 5
+# we take 10s flats and ignore the .5s ones
 
 paths = ["01 - Darks/4 Seconds", "01 - Darks/10 Seconds", "02 - Flats/5 Seconds", "02 - Flats/10 Seconds", "03 - Measurements/01 - TV Lyn", "03 - Measurements/02 - W Uma"]
 
@@ -70,17 +71,16 @@ dat = 0
 ####
 # create badpixelmap (array with 0 if pixel can be used and 1 if not)
 from badpixelmapping import badpixelmapping
-badpixelmap0_5s = 0#badpixelmapping(flat_data,dark_data) #add this if dark 0.5s have been done
-badpixelmap10s = badpixelmapping(data[3],data[1])
-badpixelmap = np.invert(np.invert(badpixelmap0_5s) * np.invert(badpixelmap10s))
+badpixelmap = badpixelmapping(data[3],data[1])
+
 
 print("done Badpixel", time.time() - start)
 
 # create masterdark and masterflat
 from masterdark import masterdark
 from masterflatnormed import masterflatnormed
-mstrdark = masterdark(dark_data)
-mstrflatn = masterflatnormed(flat_data,dark_data)
+mstrdark_4s = masterdark(data[0])
+mstrflatn = masterflatnormed(data[3],data[1])
 
 print("done Masterflat", time.time() - start)
 
