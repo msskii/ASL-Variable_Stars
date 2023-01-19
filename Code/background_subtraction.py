@@ -3,6 +3,9 @@ from photutils.background import Background2D, MedianBackground
 
 def subtract_background(data):
     """Subtracts background noise from data frame"""
+    ret = np.zeros(data.shape)
+    for i in np.arange(data[:,0,0].size):
+        ret[i] = badpixelinterpolation(data[i],badpixelmap)
     sigma_clip = SigmaClip(sigma=3.0)
     bkg_estimator = MedianBackground()
     bkg = Background2D(data, (50, 50), filter_size=(3, 3),

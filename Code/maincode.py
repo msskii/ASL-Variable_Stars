@@ -66,5 +66,6 @@ print("done badpixelinterpolation", time.time() - start)
 # variable sigclip can be added (default 4.5), lower values will flag more pixels as cosmic rays
 
 # background subtraction
+from background_subtraction import subtract_background
 science_TVLyn_4s_nobkg = subtract_background(science_TVLyn_4s)
 science_TVLyn_10s_nobkg = subtract_background(science_TVLyn_10s)
