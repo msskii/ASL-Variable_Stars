@@ -37,15 +37,12 @@ def star_mag (data, position):
     
     return phot_table
 
-def star_mag_idealradius (data, position, limit):
+def star_mag_idealradius (data, position):
     """
     data : array [[], []]
         Background must be already substracted 
     position : array [(x1,y1) , (x2,y2)]
         x,y pixel position of the object (for each picture).
-    limit: float<1 (percentage)
-        aperture radius+1 yields in a aperture sum increase < limit --> 
-        aperture radius == star radius
 
     Returns
     phot_table : array
@@ -62,6 +59,9 @@ def star_mag_idealradius (data, position, limit):
     while (control):
         temp = phot_table
         r += 1.0
+        #aperture gets bigger by factor x --> aperture sum must get bigger by factor x/2
+        factor = r**2/(r-1)**2
+        limit = 1/2*factor  
         
         aperture = CircularAperture(position, r)
         
