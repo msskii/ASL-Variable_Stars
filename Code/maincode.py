@@ -61,6 +61,7 @@ for i in range(len(Fits)):
 
 
 print(time.time() - start)
+
 #temporary variables; to be removed later
 #in the next three sections the function input names have to be changed accordingly
 dark_data = 0
@@ -73,14 +74,20 @@ badpixelmap0_5s = 0#badpixelmapping(flat_data,dark_data) #add this if dark 0.5s 
 badpixelmap10s = badpixelmapping(data[3],data[1])
 badpixelmap = np.invert(np.invert(badpixelmap0_5s) * np.invert(badpixelmap10s))
 
+print("done Badpixel", time.time() - start)
+
 # create masterdark and masterflat
 from masterdark import masterdark
 from masterflatnormed import masterflatnormed
 mstrdark = masterdark(dark_data)
 mstrflatn = masterflatnormed(flat_data,dark_data)
 
+print("done Masterflat", time.time() - start)
+
 # dark subtraction, flat division and badpixel removal
 from badpixelinterpolation import badpixelinterpolation
 from darkflatsubtraction import darkflatsubtraction
 good_data = badpixelinterpolation(dat,badpixelmap)
 science_data = darkflatsubtraction(good_data,mstrdark,mstrflatn)
+
+print("done badpixelinterpolation", time.time() - start)
