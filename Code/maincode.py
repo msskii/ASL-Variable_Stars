@@ -12,8 +12,8 @@ import numpy as np
 #   make bad pixel map (done)
 #   remove bad pixels from frames (done)
 #   dark subtraction and flat division (done)
-#   (cosmic ray rejection)
-#   background subtraction (done)
+#   cosmic ray rejection
+#   background subtraction
 #   astrometric calibration
 #   photometric calibration
 
@@ -21,27 +21,46 @@ import numpy as np
 
 # import .fit data
 import os
+import time
 from astropy.io import fits
+from enum import Enum
+
+class Fits(Enum):
+    Darks_4s = 0
+    Darks_10s = 1
+    Flats_0dot5s = 2
+    Flats_10s = 3
+    TV_Lyn = 4
+    W_Uma = 5
+
+paths = ["01 - Darks/4 Seconds", "01 - Darks/10 Seconds", "02 - Flats/5 Seconds", "02 - Flats/10 Seconds", "03 - Measurements/01 - TV Lyn", "03 - Measurements/02 - W Uma"]
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 data_path = os.path.join(script_path, os.pardir, 'data')
 
-filenames = os.listdir(data_path)
-filenames.sort()
 
-print(filenames)
+data = np.zeros(len(Fits), dtype=object)
+head = np.zeros(len(Fits),dtype=object)
+
+start = time.time()
+
+for i in range(len(Fits)):
+    FITpath = os.path.join(data_path, paths[i])
+    #print("-------------------")
+    #print(FITpath)
+    filenames = os.listdir(FITpath)
+    filenames.sort()
+    fits_data = np.zeros((len(filenames),3600,4500))
+    fits_head = np.zeros(len(filenames),dtype=object)
+    #print(filenames)
+    for j in np.arange(len(filenames)):
+       fits_data[j] = fits.getdata(os.path.join(FITpath, filenames[i]),ext=0)
+       fits_head[j] = fits.getheader(os.path.join(FITpath, filenames[i]),ext=0)
+    data[i] = fits_data
+    head[i] = fits_head
 
 
-# total path is userspecific+data path
-filenames = os.listdir(data_path)
-filenames.sort()
-
-data = np.zeros((len(filenames),4096,4096)) # img size has to be edited
-head = np.zeros(len(filenames),dtype=object)
-for i in np.arange(len(filenames)):
-    data[i] = fits.getdata(data_path + filenames[i],ext=0)
-    head[i] = fits.getheader(data_path + filenames[i],ext=0)
-
+print(time.time() - start)
 #temporary variables; to be removed later
 #in the next three sections the function input names have to be changed accordingly
 dark_data = 0
@@ -50,7 +69,9 @@ dat = 0
 ####
 # create badpixelmap (array with 0 if pixel can be used and 1 if not)
 from badpixelmapping import badpixelmapping
-badpixelmap = badpixelmapping(flat_data,dark_data)
+badpixelmap0_5s = 0#badpixelmapping(flat_data,dark_data) #add this if dark 0.5s have been done
+badpixelmap10s = badpixelmapping(data[3],data[1])
+badpixelmap = np.invert(np.invert(badpixelmap0_5s) * np.invert(badpixelmap10s))
 
 # create masterdark and masterflat
 from masterdark import masterdark
@@ -63,4 +84,3 @@ from badpixelinterpolation import badpixelinterpolation
 from darkflatsubtraction import darkflatsubtraction
 good_data = badpixelinterpolation(dat,badpixelmap)
 science_data = darkflatsubtraction(good_data,mstrdark,mstrflatn)
-
