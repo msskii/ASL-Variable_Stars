@@ -47,14 +47,15 @@ for i in range(len(Fits)):
     print(FITpath)
     filenames = os.listdir(FITpath)
     filenames.sort()
-    fits_data = np.zeros((len(filenames),3500,4500))
+    fits_data = np.zeros((len(filenames),3600,4500))
     fits_head = np.zeros(len(filenames),dtype=object)
     print(filenames)
     for j in np.arange(len(filenames)):
-       fits_data[j] = fits.getdata(data_path + filenames[i],ext=0)
-       fits_head[j] = fits.getheader(data_path + filenames[i],ext=0)
-   data[i] = fits_data
-   head[i] = fits_head
+       fits_data[j] = fits.getdata(os.path.join(FITpath, filenames[i]),ext=0)
+       fits_head[j] = fits.getheader(os.path.join(FITpath, filenames[i]),ext=0)
+    data[i] = fits_data
+    head[i] = fits_head
+
 
 
 #temporary variables; to be removed later
