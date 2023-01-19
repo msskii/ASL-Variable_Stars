@@ -21,6 +21,7 @@ import numpy as np
 
 # import .fit data
 import os
+import time
 from astropy.io import fits
 from enum import Enum
 
@@ -32,7 +33,7 @@ class Fits(Enum):
     TV_Lyn = 4
     W_Uma = 5
 
-paths = ["01 - Darks/4 Seconds", "01 - Darks/10 Seconds", "02 - Flats/5 Seconds", "02 - Flats/10 Seconds", "03 - Measurements/01 - TV Lyn", "03 - Measurements/02 - W U"]
+paths = ["01 - Darks/4 Seconds", "01 - Darks/10 Seconds", "02 - Flats/5 Seconds", "02 - Flats/10 Seconds", "03 - Measurements/01 - TV Lyn", "03 - Measurements/02 - W Uma"]
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 data_path = os.path.join(script_path, os.pardir, 'data')
@@ -41,15 +42,17 @@ data_path = os.path.join(script_path, os.pardir, 'data')
 data = np.zeros(len(Fits), dtype=object)
 head = np.zeros(len(Fits),dtype=object)
 
+start = time.time()
+
 for i in range(len(Fits)):
     FITpath = os.path.join(data_path, paths[i])
-    print("-------------------")
-    print(FITpath)
+    #print("-------------------")
+    #print(FITpath)
     filenames = os.listdir(FITpath)
     filenames.sort()
     fits_data = np.zeros((len(filenames),3600,4500))
     fits_head = np.zeros(len(filenames),dtype=object)
-    print(filenames)
+    #print(filenames)
     for j in np.arange(len(filenames)):
        fits_data[j] = fits.getdata(os.path.join(FITpath, filenames[i]),ext=0)
        fits_head[j] = fits.getheader(os.path.join(FITpath, filenames[i]),ext=0)
@@ -57,7 +60,7 @@ for i in range(len(Fits)):
     head[i] = fits_head
 
 
-
+print(time.time() - start)
 #temporary variables; to be removed later
 #in the next three sections the function input names have to be changed accordingly
 dark_data = 0
