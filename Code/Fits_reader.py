@@ -31,7 +31,7 @@ def reader(i):
     FITpath = os.path.join(data_path, paths[i])
     filenames = listdir_nohidden(FITpath)
     filenames.sort()
-    print(filenames)
+    #print(filenames)
     fits_data = np.zeros((len(filenames),3600,4500))
     for j in np.arange(len(filenames)):
        fits_data[j] = fits.getdata(os.path.join(FITpath, filenames[j]),ext=0)
