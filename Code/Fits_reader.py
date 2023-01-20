@@ -33,7 +33,7 @@ def reader(i):
     filenames = listdir_nohidden(FITpath)
     filenames.sort()
     #print(filenames)
-    fits_data = np.zeros((len(filenames),3600,4500))
+    fits_data = np.zeros((len(filenames),3600,4500), dtype=numpy.uint16)
     for j in np.arange(len(filenames)):
        fits_data[j] = fits.getdata(os.path.join(FITpath, filenames[j]),ext=0)
     return fits_data
@@ -58,8 +58,7 @@ def processed_reader(i):
     filenames = listdir_nohidden(FITpath)
     filenames.sort()
     #print(filenames)
-    fits_data = np.zeros((len(filenames),3600,4500))
+    fits_data = np.zeros((len(filenames),3600,4500), dtype=numpy.uint16)
     for j in np.arange(len(filenames)):
        fits_data[j] = fits.getdata(os.path.join(FITpath, filenames[j]),ext=0)
     return fits_data
-    
