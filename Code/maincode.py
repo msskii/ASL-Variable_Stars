@@ -120,8 +120,11 @@ mag_tr = 11.38 #[0.08]
 
 # assuming star_finder(data_list, initial guess for 4 stars,threshold)
 # outputs four lists of (x,y) coordinates for each data_list data matrix and onelist per star
-threshold = 2
-coortopleft, coortopright, coorbotleft, coorTVLyn = star_finder(science_TVLyn_10s_nobkg,np.array([(1857,2500),(3214,2886),(1428.5,1643),(2536,1500)]),threshold)
+from grunggers_image_processing import peak_finder
+coortopleft = peak_finder(science_TVLyn_10s_nobkg,1857,2500)
+coortopright = peak_finder(science_TVLyn_10s_nobkg,3214,2886)
+coorbotleft = peak_finder(science_TVLyn_10s_nobkg,1428.5,1643)
+coorTVLyn = peak_finder(science_TVLyn_10s_nobkg,2536,1500)
 
 # photometric calibration
 from photometric_extraction import photometric_extraction
