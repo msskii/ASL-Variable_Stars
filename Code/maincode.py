@@ -92,16 +92,40 @@ for d4, h4 in zip(science_TVLyn_4s_nobkg, headers_4):
 for d10, h10 in zip(science_TVLyn_10s_nobkg, headers_10):
     fr.writer(d10, os.path.join("01 - TV Lyn", "10s", "Cleaned"), h10)
 
-from Finalizers.aligner import align_write
-align_write("01 - TV Lyn/4s")
-align_write("01 - TV Lyn/10s")
+# from Finalizers.aligner import align_write
+# align_write("01 - TV Lyn/4s")
+# align_write("01 - TV Lyn/10s")
 
 from plotter import plot
-testplot = fr.processed_reader(1)[0]
-plot(testplot,"TV Lyn 4s exposure - processed",vmax=70)
-testplot2 = fr.processed_reader(3)[0]
-plot(testplot2,"TV Lyn 10s exposure - processed",vmax=70)
-from Finalizers.star_pos_finder import star_position_finder
-print(star_position_finder(testplot,200))
+#testplot = fr.processed_reader(1)[0]
+#plot(testplot,"TV Lyn 4s exposure - processed",vmax=70)
+# testplot2 = fr.processed_reader(3)[0]
+# plot(testplot2,"TV Lyn 10s exposure - processed",vmax=70)
+# from Finalizers.star_pos_finder import star_position_finder
+# stars = star_position_finder(testplot2,700)
+# x = np.array([stars[i][0] for i in np.arange(len(stars))])
+# y = np.array([stars[i][1] for i in np.arange(len(stars))])
+# import matplotlib.pyplot as plt
+# plt.scatter(x,y)
 
+########
+# reference star initial estimate of positions (x,y)
+# star bl :  (1428.5,1643) # HIP 36761
+mag_bl = 10.48 #[0.04]
+# TV Lyn :  (2536,1500)
+# star tl :  (1857,2500) # TYC 3409-2187-1
+mag_tl = 11.45 #[0.09]
+# star tr :  (3214,2886) # TYC 3409-2474-1
+mag_tr = 11.38 #[0.08]
+
+# assuming star_finder(data_list, initial guess for 4 stars,threshold)
+# outputs four lists of (x,y) coordinates for each data_list data matrix and onelist per star
+threshold = 2
+coortopleft, coortopright, coorbotleft, coorTVLyn = star_finder(science_TVLyn_10s_nobkg,np.array([(1857,2500),(3214,2886),(1428.5,1643),(2536,1500)]),threshold)
+
+# photometric calibration
+from photometric_extraction import photometric_extraction
+TVLynmag_list = np.zeros(coorTVLyn[:,0].size)
+for i in np.arange(coorTVLyn[:,0].size):
+    TVLynmag_list[i] = photometric_extraction(science_TVLyn_10s_nobkg[i],coorTVLyn[i],[coortopleft[i],coortopright[i],coorbotleft[i]],np.array([mag_tl,mag_tr,mag_bl]))
 

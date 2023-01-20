@@ -10,4 +10,4 @@ from photutils.detection import find_peaks
 import numpy as np
 
 def star_position_finder(data,threshold):
-    return find_peaks(data,threshold)
+    return find_peaks(data,threshold,box_size=100)
