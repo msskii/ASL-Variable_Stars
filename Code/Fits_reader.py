@@ -45,7 +45,7 @@ def read_headers(i):
     fits_head = np.zeros(len(filenames),dtype=object)
     for j in np.arange(len(filenames)):
         fits_head[j] = fits.getheader(os.path.join(FITpath, filenames[i]), ext=0)["DATE-OBS"]
-    return
+    return fits_head
 
 
 def writer(data, path, date):
