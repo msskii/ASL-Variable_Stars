@@ -78,6 +78,7 @@ headers_4 = fr.read_headers(4)
 headers_10 = fr.read_headers(5)
 
 for d4, d10, h4, h10 in zip(science_TVLyn_4s_nobkg, science_TVLyn_10s_nobkg, headers_4, headers_10):
+    print(headers_4)
     fr.writer(d4, os.path.join("01 - TV Lyn", "4s", "Cleaned"), h4)
     fr.writer(d10, os.path.join("01 - TV Lyn", "10s", "Cleaned"), h10)
 
