@@ -72,6 +72,8 @@ from background_subtraction import subtract_background
 science_TVLyn_4s_nobkg = subtract_background(science_TVLyn_4s)
 science_TVLyn_10s_nobkg = subtract_background(science_TVLyn_10s)
 
+print("done background subtraction", time.time() - start)
+
 headers_4 = fr.read_headers(4)
 headers_10 = fr.read_headers(5)
 
