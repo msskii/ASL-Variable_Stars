@@ -92,16 +92,27 @@ for d4, h4 in zip(science_TVLyn_4s_nobkg, headers_4):
 for d10, h10 in zip(science_TVLyn_10s_nobkg, headers_10):
     fr.writer(d10, os.path.join("01 - TV Lyn", "10s", "Cleaned"), h10)
 
-from Finalizers.aligner import align_write
-align_write("01 - TV Lyn/4s")
-align_write("01 - TV Lyn/10s")
+# from Finalizers.aligner import align_write
+# align_write("01 - TV Lyn/4s")
+# align_write("01 - TV Lyn/10s")
 
 from plotter import plot
-testplot = fr.processed_reader(1)[0]
-plot(testplot,"TV Lyn 4s exposure - processed",vmax=70)
-testplot2 = fr.processed_reader(3)[0]
-plot(testplot2,"TV Lyn 10s exposure - processed",vmax=70)
-from Finalizers.star_pos_finder import star_position_finder
-print(star_position_finder(testplot,200))
+#testplot = fr.processed_reader(1)[0]
+#plot(testplot,"TV Lyn 4s exposure - processed",vmax=70)
+# testplot2 = fr.processed_reader(3)[0]
+# plot(testplot2,"TV Lyn 10s exposure - processed",vmax=70)
+# from Finalizers.star_pos_finder import star_position_finder
+# stars = star_position_finder(testplot2,700)
+# x = np.array([stars[i][0] for i in np.arange(len(stars))])
+# y = np.array([stars[i][1] for i in np.arange(len(stars))])
+# import matplotlib.pyplot as plt
+# plt.scatter(x,y)
+
+########
+# reference star initial estimate of positions (x,y)
+# star 1 :  (1428.5,1643)
+# star 2 :  (2536,1500)
+# star 3 :  (1857,2500)
+# TV Lyn :  (3214,2886)
 
 
