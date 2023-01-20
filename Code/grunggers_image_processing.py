@@ -13,10 +13,16 @@ def peak_finder(data, startx, starty, threshold, box_radius=5, abort=500):
                 return (xo, yo)
             if(mean > highestsum):
                 highestsum = mean
-        print(r, highestsum)
+        #print(r, highestsum)
     return (0,0)
 
-#test
+
+def peak_finder_it(data, startx, starty, threshold=50, box_radius=5, abort=500):
+    pos = np.array(len(data[:,0,0]), dtype=object)
+    for i in range(len(data[:,0,0])):
+        pos[i] = peak_finder(data[i], startx, starty, threshold=50, box_radius=5, abort=500)
+        (startx, starty) = pos[i]
+    return pos
 
 
 from astropy.io import fits
