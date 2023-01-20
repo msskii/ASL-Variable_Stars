@@ -89,7 +89,10 @@ align_write("01 - TV Lyn/10s")
 
 from plotter import plot
 testplot = fr.processed_reader(1)[0]
-plot(testplot,"TV Lyn 4s exposure - processed")
+plot(testplot,"TV Lyn 4s exposure - processed",vmax=70)
+testplot2 = fr.processed_reader(3)[0]
+plot(testplot2,"TV Lyn 10s exposure - processed",vmax=70)
 from Finalizers.star_pos_finder import star_position_finder
 print(star_position_finder(testplot,200))
+
 
