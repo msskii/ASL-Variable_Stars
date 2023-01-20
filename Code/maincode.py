@@ -59,6 +59,11 @@ good_TVLyn_10s = multiplebadinterpol(5, badpixelmap)
 science_TVLyn_4s = darkflatsubtraction(good_TVLyn_4s,mstrdark_4s,mstrflatn)
 science_TVLyn_10s = darkflatsubtraction(good_TVLyn_10s,mstrdark_10s,mstrflatn)
 
+import gc
+del good_TVLyn_4s
+del good_TVLyn_10s
+gc.collect()
+
 print("done badpixelinterpolation", time.time() - start)
 
 # cosmic ray rejection
@@ -71,6 +76,10 @@ print("done badpixelinterpolation", time.time() - start)
 from background_subtraction import subtract_background
 science_TVLyn_4s_nobkg = subtract_background(science_TVLyn_4s)
 science_TVLyn_10s_nobkg = subtract_background(science_TVLyn_10s)
+
+del science_TVLyn_4s
+del science_TVLyn_10s
+gc.collect()
 
 print("done background subtraction", time.time() - start)
 
