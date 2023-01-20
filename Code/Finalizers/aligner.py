@@ -15,6 +15,6 @@ def align_write(target_measurement):
     master = fits.getdata(source_dir + source[0])
     for i, file in enumerate(source[1:]):
         transformed, _ = aa.register(master, fits.getdata(source_dir + file))
-        fits.writeto(target_dir + "al_" + file, transformed)
+        fits.writeto(target_dir + "al_" + file, transformed, overwrite=True)
 
     print("[+] Alignment completed.")

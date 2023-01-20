@@ -51,7 +51,7 @@ def read_headers(i):
 
 def writer(data, path, date):
     write_to = os.path.join(data_write, path)
-    fits.writeto(os.path.join(write_to, "mes_" + date + ".FITS"), data)
+    fits.writeto(os.path.join(write_to, "mes_" + date + ".FITS"), data, overwrite=True)
 
 def processed_reader(i):
     FITpath = os.path.join(data_write, processed_paths[i])
