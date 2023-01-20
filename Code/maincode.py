@@ -110,9 +110,22 @@ from plotter import plot
 
 ########
 # reference star initial estimate of positions (x,y)
-# star 1 :  (1428.5,1643)
-# star 2 :  (2536,1500)
-# star 3 :  (1857,2500)
-# TV Lyn :  (3214,2886)
+# star bl :  (1428.5,1643) # HIP 36761
+mag_bl = 10.48 #[0.04]
+# TV Lyn :  (2536,1500)
+# star tl :  (1857,2500) # TYC 3409-2187-1
+mag_tl = 11.45 #[0.09]
+# star tr :  (3214,2886) # TYC 3409-2474-1
+mag_tr = 11.38 #[0.08]
 
+# assuming star_finder(data_list, initial guess for 4 stars,threshold)
+# outputs four lists of (x,y) coordinates for each data_list data matrix and onelist per star
+threshold = 2
+coortopleft, coortopright, coorbotleft, coorTVLyn = star_finder(science_TVLyn_10s_nobkg,np.array([(1857,2500),(3214,2886),(1428.5,1643),(2536,1500)]),threshold)
+
+# photometric calibration
+from photometric_extraction import photometric_extraction
+TVLynmag_list = np.zeros(coorTVLyn[:,0].size)
+for i in np.arange(coorTVLyn[:,0].size):
+    TVLynmag_list[i] = photometric_extraction(science_TVLyn_10s_nobkg[i],coorTVLyn[i],[coortopleft[i],coortopright[i],coorbotleft[i]],np.array([mag_tl,mag_tr,mag_bl]))
 
