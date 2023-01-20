@@ -87,3 +87,9 @@ from Finalizers.aligner import align_write
 align_write("01 - TV Lyn/4s")
 align_write("01 - TV Lyn/10s")
 
+from plotter import plot
+testplot = fr.processed_reader(1)[0]
+plot(testplot,"TV Lyn 4s exposure - processed")
+
+
+

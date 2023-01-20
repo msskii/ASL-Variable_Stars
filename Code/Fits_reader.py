@@ -15,6 +15,7 @@ class Fits(Enum):
 # we take 10s flats and ignore the .5s ones
 
 paths = [os.path.join("01 - Darks", "4 Seconds"),os.path.join("01 - Darks", "10 Seconds"), os.path.join("02 - Flats", "5 Seconds"), os.path.join("02 - Flats", "10 Seconds"), os.path.join("03 - Measurements","01 - TV Lyn","4s"), os.path.join("03 - Measurements","01 - TV Lyn","10s"), os.path.join("03 - Measurements","02 - W Uma"),"XX - Special"]
+processed_paths = [os.path.join("01 - TV Lyn", "4s", "Aligned"), os.path.join("01 - TV Lyn", "4s","Cleaned"), os.path.join("01 - TV Lyn", "10s", "Aligned"), os.path.join("01 - TV Lyn", "10s","Cleaned"),os.path.join("02 - W Uma", "Aligned"), os.path.join("02 - W Uma", "Averaged"),os.path.join("02 - W Uma", "Cleaned")]
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 data_path = os.path.join(script_path, os.pardir, 'data')
@@ -51,3 +52,14 @@ def read_headers(i):
 def writer(data, path, date):
     write_to = os.path.join(data_write, path)
     fits.writeto(os.path.join(write_to, "mes_" + date + ".FITS"), data)
+
+def processed_reader(i):
+    FITpath = os.path.join(data_write, processed_paths[i])
+    filenames = listdir_nohidden(FITpath)
+    filenames.sort()
+    #print(filenames)
+    fits_data = np.zeros((len(filenames),3600,4500))
+    for j in np.arange(len(filenames)):
+       fits_data[j] = fits.getdata(os.path.join(FITpath, filenames[j]),ext=0)
+    return fits_data
+    
