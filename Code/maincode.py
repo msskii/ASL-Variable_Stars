@@ -120,12 +120,21 @@ mag_tr = 11.38 #[0.08]
 
 # assuming star_finder(data_list, initial guess for 4 stars,threshold)
 # outputs four lists of (x,y) coordinates for each data_list data matrix and onelist per star
-threshold = 2
-coortopleft, coortopright, coorbotleft, coorTVLyn = star_finder(science_TVLyn_10s_nobkg,np.array([(1857,2500),(3214,2886),(1428.5,1643),(2536,1500)]),threshold)
+from grunggers_image_processing import peak_finder
+coortopleft = peak_finder(science_TVLyn_10s_nobkg,2500,1857)
+coortopright = peak_finder(science_TVLyn_10s_nobkg,2886,3214)
+coorbotleft = peak_finder(science_TVLyn_10s_nobkg,1643,1428.5)
+coorTVLyn = peak_finder(science_TVLyn_10s_nobkg,1500,2536)
 
 # photometric calibration
 from photometric_extraction import photometric_extraction
 TVLynmag_list = np.zeros(coorTVLyn[:,0].size)
 for i in np.arange(coorTVLyn[:,0].size):
     TVLynmag_list[i] = photometric_extraction(science_TVLyn_10s_nobkg[i],coorTVLyn[i],[coortopleft[i],coortopright[i],coorbotleft[i]],np.array([mag_tl,mag_tr,mag_bl]))
+
+# light curve plot
+from time_extractor import time_extract
+import matplotlib.pyplot as plt
+time_list = time_extract(headers_10)
+plt.plot(time_list,TVLynmag_list)
 
