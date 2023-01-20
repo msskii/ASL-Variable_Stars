@@ -41,10 +41,10 @@ def read_headers(i):
     FITpath = os.path.join(data_path, paths[i])
     filenames = listdir_nohidden(FITpath)
     filenames.sort()
-    print(filenames)
     fits_head = np.zeros(len(filenames),dtype=object)
     for j in np.arange(len(filenames)):
-        fits_head[j] = fits.getheader(os.path.join(FITpath, filenames[i]), ext=0)["DATE-OBS"]
+        fits_head[j] = fits.getheader(os.path.join(FITpath, filenames[j]), ext=0)["DATE-OBS"].replace("T", "_")\
+            .replace(":", "_").replace(".000", "")
     return fits_head
 
 
