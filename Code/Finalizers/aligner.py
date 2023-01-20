@@ -6,7 +6,7 @@ import os
 def align_write(target_measurement):
     """Takes cleaned target measurement and aligns all images to match."""
 
-    source_dir = "../data/03 - Measurements/" + target_measurement + "/"
+    source_dir = "../data/04 - Edited Images/" + target_measurement + "/Cleaned/"
     target_dir = "../data/04 - Edited Images/" + target_measurement + "/Aligned/"
 
     print("[+] Performing alignment.")
