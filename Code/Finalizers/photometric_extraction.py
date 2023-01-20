@@ -18,7 +18,7 @@ def photometric_extraction(data, pos, posref_list, ref_mag_list):
     data = matrix with photon counts
     pos = tuple with x,y coordinates of star
     posref_list = list of tuples with x,y coordinates
-    ref_mag_list = list of magnitudes of ref stars according to posref_list
+    ref_mag_list = np.array of magnitudes of ref stars according to posref_list
     '''
     aperturestar = CircularAperture(pos, r=3.0)
     apertureref_list = [CircularAperture(posref_list[i], r=3.0) for i in np.arange(len(posref_list))]
@@ -28,5 +28,5 @@ def photometric_extraction(data, pos, posref_list, ref_mag_list):
     # simplest algorithm for magnitude extraction:¨¨
     # mag of target = sum_ref(mag_ref * flux_targ/flux_ref)
     flux_targ = StarTab[0][3]
-    flux_ref = [RefTab[i][3] for i in np.arange(len(RefTab))]
-    return(sum(ref_mag_list/flux_ref * flux_targ))
+    flux_ref = np.array([RefTab[i][0][3] for i in np.arange(len(RefTab))])
+    return(np.sum(ref_mag_list/flux_ref * flux_targ))
