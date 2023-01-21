@@ -44,10 +44,13 @@ def read_headers(i):
     filenames.sort()
     fits_head = np.zeros(len(filenames),dtype=object)
     for j in np.arange(len(filenames)):
-        fits_head[j] = fits.getheader(os.path.join(FITpath, filenames[j]), ext=0)["DATE-OBS"].replace("T", "_")\
-            .replace(":", "_").replace(".000", "")
+        fits_head[j] = transform_timestamp(fits.getheader(os.path.join(FITpath, filenames[j]), ext=0)["DATE-OBS"])
     return fits_head
 
+
+def transform_timestamp(raw):
+    return raw.replace("T", "_")\
+            .replace(":", "_").replace(".000", "")
 
 def writer(data, path, date):
     write_to = os.path.join(data_write, path)
@@ -58,7 +61,7 @@ def processed_reader(i):
     filenames = listdir_nohidden(FITpath)
     filenames.sort()
     #print(filenames)
-    fits_data = np.zeros((len(filenames),3600,4500), dtype=numpy.uint16)
+    fits_data = np.zeros((len(filenames),3600,4500), dtype=np.uint16)
     for j in np.arange(len(filenames)):
        fits_data[j] = fits.getdata(os.path.join(FITpath, filenames[j]),ext=0)
     return fits_data
