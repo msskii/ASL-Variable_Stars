@@ -8,4 +8,4 @@ def plot(data, title, vmax=200):
     plt.gca().invert_yaxis()
     plt.colorbar()
     plt.title(title)
-    plt.show()
+    

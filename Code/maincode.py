@@ -120,11 +120,11 @@ mag_tr = 11.38 #[0.08]
 
 # assuming star_finder(data_list, initial guess for 4 stars,threshold)
 # outputs four lists of (x,y) coordinates for each data_list data matrix and onelist per star
-from grunggers_image_processing import peak_finder
-coortopleft = peak_finder(science_TVLyn_10s_nobkg,2500,1857)
-coortopright = peak_finder(science_TVLyn_10s_nobkg,2886,3214)
-coorbotleft = peak_finder(science_TVLyn_10s_nobkg,1643,1428.5)
-coorTVLyn = peak_finder(science_TVLyn_10s_nobkg,1500,2536)
+from grunggers_image_processing import peak_finder_it
+coortopleft = peak_finder_it(science_TVLyn_10s_nobkg,2500,1857)
+coortopright = peak_finder_it(science_TVLyn_10s_nobkg,2886,3214)
+coorbotleft = peak_finder_it(science_TVLyn_10s_nobkg,1643,1428.5)
+coorTVLyn = peak_finder_it(science_TVLyn_10s_nobkg,1500,2536)
 
 # photometric calibration
 from photometric_extraction import photometric_extraction
@@ -138,3 +138,12 @@ import matplotlib.pyplot as plt
 time_list = time_extract(headers_10)
 plt.plot(time_list,TVLynmag_list)
 
+
+import matplotlib.pyplot as plt
+plot(science_TVLyn_10s_nobkg[-2],"it works!")
+xy = np.zeros((coortopleft.size, 2))
+for i in np.arange(coortopleft.size):
+    xy[i] = coortopleft[i]
+x = xy[:,0]
+y = xy[:,1]
+plt.scatter(y,x)
