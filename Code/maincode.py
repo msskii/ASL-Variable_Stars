@@ -127,7 +127,7 @@ coorbotleft = peak_finder_it(science_TVLyn_10s_nobkg,1643,1428.5)
 coorTVLyn = peak_finder_it(science_TVLyn_10s_nobkg,1500,2536)
 
 # photometric calibration
-from photometric_extraction import photometric_extraction
+from Finalizers.photometric_extraction import photometric_extraction
 TVLynmag_list = np.zeros(coorTVLyn[:,0].size)
 for i in np.arange(coorTVLyn[:,0].size):
     TVLynmag_list[i] = photometric_extraction(science_TVLyn_10s_nobkg[i],coorTVLyn[i],[coortopleft[i],coortopright[i],coorbotleft[i]],np.array([mag_tl,mag_tr,mag_bl]))
