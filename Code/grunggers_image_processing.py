@@ -6,10 +6,10 @@ def peak_finder(data, startx, starty, threshold, box_radius=10, abort=500):
     for r in range(abort):
         rx, ry = draw.circle_perimeter(startx, starty, radius=r+1, shape=data.shape)
         for xo,yo in zip(rx,ry):
-            print(r)
             mx, my = draw.disk((xo, yo), box_radius)
             mean = np.median(data[mx,my])
             if(mean >= threshold):
+                print("found")
                 return (xo, yo)
     return (0,0)
 
