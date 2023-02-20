@@ -21,9 +21,10 @@ data1 = 86561*data[0]
 data2 = 86561*data[1]
 data3 = 86561*data[50]
 data4 = 86561*data[75]
+dataproblem = 86561*data[21]
 
 start = time.time()
-peaks = pk.peak_finder_it(np.array([data3]),2080,2060)
+peaks = pk.peak_finder_it(np.array([dataproblem]),2079,2060)
 print(time.time()-start,peaks)
 # peaks = find_peaks(data1,0.001,npeaks=4)
 # peaks_x = np.zeros(4)
@@ -33,3 +34,4 @@ print(time.time()-start,peaks)
 #     peaks_y[i] = peaks[i][1]
 plot.plot(data3,"title",vmax=70,show=False)
 plt.scatter(peaks[0][1],peaks[0][0],s=1,c='red')
+plt.scatter(1000,2000)
