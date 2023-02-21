@@ -34,8 +34,8 @@ def peak_center_zonein(data,corners,borderthickness = 1):
     Mx,My,r = threepointcircledefinition(cornerlist)
     R = np.sqrt((cornercheck[0]-Mx)**2 + (cornercheck[1]-My)**2)
     Rr = np.max(np.array([r,R])) + borderthickness
-    print("Overshoot: ", Rr-r)
-    rx,ry = draw.disk(int(Mx+0.5),int(My+0.5),int(Rr+1),shape=data.shape)
+    #print("Overshoot: ", Rr-r)
+    rx,ry = draw.disk((int(Mx+0.5),int(My+0.5)),int(Rr+1),shape=data.shape)
     Totalcount = np.sum(data[rx,ry])
     return Totalcount
     

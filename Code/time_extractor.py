@@ -14,7 +14,12 @@ def time_extract(date_list):
     h = date_list.copy()
     m = date_list.copy()
     s = date_list.copy()
+    hstr = date_list.copy()
+    mstr = date_list.copy()
+    sstr = date_list.copy()
     for i in np.arange(h_m_s_list.size):
         h_m_s_list[i] = date_list[i].lstrip("2023-01-18_")
-        h,m,s = h_m_s_list[i].split('_')
-    return 24*60*h + 60*m + s
+        h_m_s_list[i] = date_list[i][11:]
+        hstr[i],mstr[i],sstr[i] = h_m_s_list[i].split('_')
+        h[i],m[i],s[i] = int(hstr[i]),int(mstr[i]),int(sstr[i])
+    return 60*60*(h-2) + 60*(m-56) + (s-56)

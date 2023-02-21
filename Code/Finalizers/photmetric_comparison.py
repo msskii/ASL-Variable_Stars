@@ -16,11 +16,14 @@ def photometric_extraction(data, corners, cornersref_list, ref_mag_list):
     # ma - mb = -2.5 log(Na/Nb)
     # ma = mb -2.5 log(Na/Nb)
     starsum = peak_center_zonein(data,corners)
+    print("wtf?",ref_mag_list)
     refstarsum = np.zeros_like(ref_mag_list)
+    print(refstarsum)
     for i in np.arange(ref_mag_list.size):
+        print(i)
         refstarsum[i] = peak_center_zonein(data,cornersref_list[i])
     mstar = np.zeros_like(ref_mag_list)
-    for i in np.arange(ref_mag_list):
+    for i in np.arange(ref_mag_list.size):
         mstar[i] = ref_mag_list[i] - 2.5 * np.log10(starsum/refstarsum[i])
     return np.sum(mstar)/mstar.size
 
@@ -32,7 +35,7 @@ def photometric_extraction_it(data_list,corners_list,cornersref_list_list,ref_ma
     magnitude_list = np.zeros(N)
     for j in np.arange(N):
         print("extraction step: ", j)
-        magnitude_list[j] = photometric_extraction(data_list[j], corners_list[:,j], cornersref_list_list[:,:,j], ref_mag_list[j])
+        magnitude_list[j] = photometric_extraction(data_list[j], corners_list[:,j], cornersref_list_list[:,:,j], ref_mag_list)
     return magnitude_list
     
     

@@ -48,12 +48,13 @@ def read_headers(i):
     return fits_head
 
 def processed_read_headers(i):
-    FITpath = os.path.join(data_path, processed_paths[i])
+    FITpath = os.path.join(data_write, processed_paths[i])
     filenames = listdir_nohidden(FITpath)
     filenames.sort()
     fits_head = np.zeros(len(filenames),dtype=object)
     for j in np.arange(len(filenames)):
-        fits_head[j] = transform_timestamp(fits.getheader(os.path.join(FITpath, filenames[j]), ext=0)["DATE-OBS"])
+        #fits_head[j] = transform_timestamp(fits.getheader(os.path.join(FITpath, filenames[j]), ext=0)["DATE"])
+        fits_head[j] = fits.getheader(os.path.join(FITpath, filenames[j]), ext=0)
     return fits_head
 
 

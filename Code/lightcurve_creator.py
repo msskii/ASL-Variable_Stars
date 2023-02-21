@@ -10,7 +10,9 @@ import plotter as plot
 import Fits_reader as fr
 
 TVLyn_data = 86561*fr.processed_reader(2)
-headers_10 = fr.processed_read_headers(2)
+#headers_10 = fr.processed_read_headers(2)
+headers_10 = fr.read_headers(5)
+headers_10 = np.delete(headers_10,np.array([1,20,21,36,37,38,54,58,61]))
 
 # reference star initial estimate of positions (x,y)
 # star bl :  (1428.5,1643) # HIP 36761
@@ -26,9 +28,9 @@ refmaglist = np.array([mag_tl,mag_tr,mag_bl])
 from grunggers_image_processing import peak_finder_it
 # coortopleft = peak_finder_it(TVLyn_data,2000,2000)
 coortopleft_down = peak_finder_it(TVLyn_data,2079,2060)
-print("tld done")
+#print("tld done")
 coortopleft_up = peak_finder_it(TVLyn_data,2110,2060)
-print("tlu done")
+#print("tlu done")
 coortopleft_left = peak_finder_it(TVLyn_data,2096,2030)
 coortopleft_right = peak_finder_it(TVLyn_data,2091,2074)
 coortopleft = np.array([coortopleft_left,coortopleft_right,coortopleft_up,coortopleft_down])
@@ -58,7 +60,7 @@ refstarcoor = np.array([coortopleft,coortopright,coorbotleft])
 # photometric calibration
 from Finalizers.photmetric_comparison import photometric_extraction_it, photometric_extraction
 m_TVLyn_list = photometric_extraction_it(TVLyn_data,coorTVLyn,refstarcoor,refmaglist)
-print(m_TVLyn_list)
+
 
 # from Finalizers.photometric_extraction import photometric_extraction
 # TVLynmag_list = np.zeros(coorTVLyn[:,0].size)
@@ -66,11 +68,11 @@ print(m_TVLyn_list)
 #     TVLynmag_list[i] = photometric_extraction(TVLyn_data[i],coorTVLyn[i],[coortopleft[i],coortopright[i],coorbotleft[i]],np.array([mag_tl,mag_tr,mag_bl]))
 
 
-# # light curve plot
-# from time_extractor import time_extract
-# import matplotlib.pyplot as plt
-# time_list = time_extract(headers_10)
-# plt.plot(time_list,TVLynmag_list)
+# light curve plot
+from time_extractor import time_extract
+import matplotlib.pyplot as plt
+time_list = time_extract(headers_10)
+plt.scatter(time_list,m_TVLyn_list)
 
 # import matplotlib.pyplot as plt
 # plot.plot(TVLyn_data[-2],"it works!")
