@@ -61,24 +61,66 @@ refstarcoor = np.array([coortopleft,coortopright,coorbotleft])
 from Finalizers.photmetric_comparison import photometric_extraction_it, photometric_extraction
 m_TVLyn_list = photometric_extraction_it(TVLyn_data,coorTVLyn,refstarcoor,refmaglist)
 
-
-# from Finalizers.photometric_extraction import photometric_extraction
-# TVLynmag_list = np.zeros(coorTVLyn[:,0].size)
-# for i in np.arange(coorTVLyn[:,0].size):
-#     TVLynmag_list[i] = photometric_extraction(TVLyn_data[i],coorTVLyn[i],[coortopleft[i],coortopright[i],coorbotleft[i]],np.array([mag_tl,mag_tr,mag_bl]))
-
-
 # light curve plot
 from time_extractor import time_extract
 import matplotlib.pyplot as plt
 time_list = time_extract(headers_10)
 plt.scatter(time_list,m_TVLyn_list)
 
-# import matplotlib.pyplot as plt
-# plot.plot(TVLyn_data[-2],"it works!")
-# xy = np.zeros((coortopleft.size, 2))
-# for i in np.arange(coortopleft.size):
-#     xy[i] = coortopleft[i]
-# x = xy[:,0]
-# y = xy[:,1]
-# plt.scatter(y,x)
+from scipy import optimize
+time_list_arr = np.zeros(time_list.size)
+for i in np.arange(time_list.size):
+    time_list_arr[i] = time_list[i]
+def test_func(x, a, b, c):
+    return a * np.sin(b * x) + c
+
+# plt.scatter(time_list_arr/1000,np.ones_like(time_list_arr)) 
+# plt.scatter(np.array([0.35,0.8,1.4,2,2.7,3.25,4]),np.ones(7),color='orange')
+# plt.grid(which='both') 
+# plt.show()
+
+
+p1 = np.where(time_list_arr<350)
+p2 = np.where((time_list_arr<800)&(time_list_arr>350))
+p3 = np.where((time_list_arr<1400)&(time_list_arr>800))
+p4 = np.where((time_list_arr<2000)&(time_list_arr>1400))
+p5 = np.where((time_list_arr<2700)&(time_list_arr>2000))
+p6 = np.where((time_list_arr<3250)&(time_list_arr>2700))
+p7 = np.where((time_list_arr<4000)&(time_list_arr>3250))
+p8 = np.where(time_list_arr>4000)
+
+t1 = np.median(time_list_arr[p1])
+Datap1 = m_TVLyn_list[p1]
+t2 = np.median(time_list_arr[p2])
+Datap2 = m_TVLyn_list[p2]
+t3 = np.median(time_list_arr[p3])
+Datap3 = m_TVLyn_list[p3]
+t4 = np.median(time_list_arr[p4])
+Datap4 = m_TVLyn_list[p4]
+t5 = np.median(time_list_arr[p5])
+Datap5 = m_TVLyn_list[p5]
+t6 = np.median(time_list_arr[p6])
+Datap6 = m_TVLyn_list[p6]
+t7 = np.median(time_list_arr[p7])
+Datap7 = m_TVLyn_list[p7]
+t8 = np.median(time_list_arr[p8])
+Datap8 = m_TVLyn_list[p8]
+
+D1 = np.median(Datap1)
+D2 = np.median(Datap2)
+D3 = np.median(Datap3)
+D4 = np.median(Datap4)
+D5 = np.median(Datap5)
+D6 = np.median(Datap6)
+D7 = np.median(Datap7)
+D8 = np.median(Datap8)
+
+t = np.array([t1,t2,t3,t4,t5,t6,t7,t8])
+D = np.array([D1,D2,D3,D4,D5,D6,D7,D8])
+plt.scatter(t,D)
+
+params, params_covariance = optimize.curve_fit(test_func, t, D,
+                                                p0=[0.1, 2*np.pi/8000, 11.52],bounds=(np.array([0.8,1/10000,10]),np.array([1,6/5000,12])))
+
+print(params)
+plt.scatter(np.arange(4000,step=10),test_func(np.arange(4000,step=10),params[0],params[1],params[2]))
