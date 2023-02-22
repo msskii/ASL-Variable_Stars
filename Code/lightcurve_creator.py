@@ -74,9 +74,9 @@ for i in np.arange(time_list.size):
 def test_func(x, a, b, c):
     return a * np.sin(b * x) + c
 
-# plt.scatter(time_list_arr/1000,np.ones_like(time_list_arr)) 
+# plt.scatter(time_list_arr/1000,np.ones_like(time_list_arr))
 # plt.scatter(np.array([0.35,0.8,1.4,2,2.7,3.25,4]),np.ones(7),color='orange')
-# plt.grid(which='both') 
+# plt.grid(which='both')
 # plt.show()
 
 
@@ -117,10 +117,34 @@ D8 = np.median(Datap8)
 
 t = np.array([t1,t2,t3,t4,t5,t6,t7,t8])
 D = np.array([D1,D2,D3,D4,D5,D6,D7,D8])
-plt.scatter(t,D)
 
-params, params_covariance = optimize.curve_fit(test_func, t, D,
-                                                p0=[0.1, 2*np.pi/8000, 11.52],bounds=(np.array([0.8,1/10000,10]),np.array([1,6/5000,12])))
+#params, params_covariance = optimize.curve_fit(test_func, t, D, p0=[0.1, 2*np.pi/8000, 11.52],bounds=(np.array([0.8,1/10000,10]),np.array([1,6/5000,12])))
 
-print(params)
-plt.scatter(np.arange(4000,step=10),test_func(np.arange(4000,step=10),params[0],params[1],params[2]))
+def fit_sin(tt, yy):
+    '''Fit sin to the input time sequence, and return fitting parameters "amp", "omega", "phase", "offset", "freq", "period" and "fitfunc"'''
+    tt = np.array(tt)
+    yy = np.array(yy)
+    ff = np.fft.fftfreq(len(tt), (tt[1]-tt[0]))   # assume uniform spacing
+    Fyy = abs(np.fft.fft(yy))
+    guess_freq = abs(ff[np.argmax(Fyy[1:])+1])   # excluding the zero frequency "peak", which is related to offset
+    guess_amp = np.std(yy) * 2.**0.5
+    guess_offset = np.mean(yy)
+    guess = np.array([guess_amp, 2.*np.pi*guess_freq, 0., guess_offset])
+
+    def sinfunc(t, A, w, p, c):  return A * np.sin(w*t + p) + c
+    popt, pcov = optimize.curve_fit(sinfunc, tt, yy, p0=guess)
+    A, w, p, c = popt
+    f = w/(2.*np.pi)
+    fitfunc = lambda t: A * np.sin(w*t + p) + c
+    return {"amp": A, "omega": w, "phase": p, "offset": c, "freq": f, "period": 1./f, "fitfunc": fitfunc, "maxcov": np.max(pcov), "rawres": (guess,popt,pcov)}
+
+res = fit_sin(t, D)
+print( "Amplitude=%(amp)s, Angular freq.=%(omega)s, phase=%(phase)s, offset=%(offset)s, Max. Cov.=%(maxcov)s" % res )
+
+plt.plot(t, D, "ok", label="data")
+plt.plot(t, res["fitfunc"](tt2), "r-", label="y fit curve", linewidth=2)
+plt.legend(loc="best")
+plt.show()
+
+#print(params)
+#plt.scatter(np.arange(4000,step=10),test_func(np.arange(4000,step=10),params[0],params[1],params[2]))
