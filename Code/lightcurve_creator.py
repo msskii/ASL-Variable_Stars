@@ -130,21 +130,65 @@ def fit_sin(tt, yy):
     guess_amp = np.std(yy) * 2.**0.5
     guess_offset = np.mean(yy)
     guess = np.array([guess_amp, 2.*np.pi*guess_freq, 0., guess_offset])
-
+    numerical_guess = np.array([0.042*1.5,2*np.pi*0.0041/2,-0.8,11.5])
+    
     def sinfunc(t, A, w, p, c):  return A * np.sin(w*t + p) + c
-    popt, pcov = optimize.curve_fit(sinfunc, tt, yy, p0=guess)
+    #popt, pcov = optimize.curve_fit(sinfunc, tt, yy, p0=guess)
+    popt, pcov = optimize.curve_fit(sinfunc, tt, yy, p0=guess)#,bounds=(np.array([0,1/10000,-1000,10]),np.array([0.2,0.01,1000,12])))
     A, w, p, c = popt
     f = w/(2.*np.pi)
-    fitfunc = lambda t: A * np.sin(w*t + p) + c
+    corr_w = 1/2
+    corr_A = 1.5
+    corr_p = 1.5
+    fitfunc = lambda t: A*corr_A * np.sin(w*t*corr_w + p+corr_p) + c
+    #fitfunc = lambda t: A* np.sin(w*t + p) + c
     return {"amp": A, "omega": w, "phase": p, "offset": c, "freq": f, "period": 1./f, "fitfunc": fitfunc, "maxcov": np.max(pcov), "rawres": (guess,popt,pcov)}
 
-res = fit_sin(t, D)
+#res = fit_sin(t, D)
+res = fit_sin(time_list_arr,m_TVLyn_list)
 print( "Amplitude=%(amp)s, Angular freq.=%(omega)s, phase=%(phase)s, offset=%(offset)s, Max. Cov.=%(maxcov)s" % res )
 
 plt.plot(t, D, "ok", label="data")
-plt.plot(t, res["fitfunc"](tt2), "r-", label="y fit curve", linewidth=2)
+tt = np.linspace(0,4500,10000)
+plt.plot(tt, res["fitfunc"](tt), "r-", label="y fit curve", linewidth=2)
 plt.legend(loc="best")
 plt.show()
 
 #print(params)
 #plt.scatter(np.arange(4000,step=10),test_func(np.arange(4000,step=10),params[0],params[1],params[2]))
+
+# skewed sine function:
+def skewsinfunc(t, A, w, p, c, n):
+    import scipy.special as sp
+    S = np.ones(n,dtype=object)
+    for k in np.arange(n):
+        S[k] = (sp.binom(2*n,n-(k+1)))/(sp.binom(2*n,n)) * np.sin((k+1) * w * t + p)/(k+1)
+    return A*np.sum(S,axis=0)+c
+    
+def fit_skewed_sin(tt, yy):
+    '''Fit sin to the input time sequence, and return fitting parameters "amp", "omega", "phase", "offset", "freq", "period" and "fitfunc"'''
+    tt = np.array(tt)
+    yy = np.array(yy)
+    ff = np.fft.fftfreq(len(tt), (tt[1]-tt[0]))   # assume uniform spacing
+    Fyy = abs(np.fft.fft(yy))
+    guess_freq = abs(ff[np.argmax(Fyy[1:])+1])   # excluding the zero frequency "peak", which is related to offset
+    guess_amp = np.std(yy) * 2.**0.5
+    guess_offset = np.mean(yy)
+    guess_n = 10
+    guess = np.array([guess_amp, 2.*np.pi*guess_freq, 0., guess_offset,guess_n])
+    #popt, pcov = optimize.curve_fit(sinfunc, tt, yy, p0=guess)
+    popt, pcov = optimize.curve_fit(skewsinfunc, tt, yy,p0=guess)#,bounds=(np.array([0,1/10000,-1000,10,2]),np.array([0.2,6/5000,1000,12,2000])))
+    A, w, p, c, n = popt
+    f = w/(2.*np.pi)
+    fitfunc = lambda t: skewsinfunc(t,A,w,p,c,n)
+    return {"amp": A, "omega": w, "phase": p, "offset": c, "freq": f, "period": 1./f,"n": n, "fitfunc": fitfunc, "maxcov": np.max(pcov), "rawres": (guess,popt,pcov)}
+
+res = fit_sin(t, D)
+print( "Amplitude=%(amp)s, Angular freq.=%(omega)s, phase=%(phase)s, offset=%(offset)s, n=%(n)s, Max. Cov.=%(maxcov)s" % res )
+
+plt.plot(t, D, "ok", label="data")
+tt = np.linspace(0,4500,10000)
+plt.plot(tt, skewsinfunc(tt,0.07,0.0015,0,11.51,10), "r-", label="y skew fit curve", linewidth=2)
+#plt.plot(tt, res["fitfunc"](tt), "r-", label="y fit curve", linewidth=2)
+plt.legend(loc="best")
+plt.show()
