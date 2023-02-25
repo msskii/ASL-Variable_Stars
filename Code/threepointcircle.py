@@ -13,6 +13,7 @@ def threepointcircledefinition(points):
     '''finds radius and center coordinates of a circle
     given three non-collinear points (x,y-tuples of 
     points given in 3points) on the circle'''
+    #print(points)
     Px = points[0][0]
     Py = points[0][1]
     Qx = points[1][0]

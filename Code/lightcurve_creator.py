@@ -8,11 +8,14 @@ Created on Sun Feb 19 14:07:50 2023
 import numpy as np
 import plotter as plot
 import Fits_reader as fr
+import time
 
 TVLyn_data = 86561*fr.processed_reader(2)
+WUma_data = fr.processed_reader(-1)
 #headers_10 = fr.processed_read_headers(2)
 headers_10 = fr.read_headers(5)
 headers_10 = np.delete(headers_10,np.array([1,20,21,36,37,38,54,58,61]))
+headers_wuma = fr.read_headers(6)
 
 # reference star initial estimate of positions (x,y)
 # star bl :  (1428.5,1643) # HIP 36761
@@ -23,9 +26,61 @@ mag_tl = 11.45 #[0.09]
 # star tr :  (3214,2886) # TYC 3409-2474-1
 mag_tr = 11.38 #[0.08]
 
+# ref star wuma : HD 83728
+mag_wumaref = 8.87 # in visible wavelengths
+
+
 refmaglist = np.array([mag_tl,mag_tr,mag_bl])
+refmag_wuma = np.array([mag_wumaref])
 
 from grunggers_image_processing import peak_finder_it
+
+# WUma right
+coorWuma_right = np.zeros(23,dtype=tuple)
+coorWuma_right[:10] = peak_finder_it(WUma_data[:10],2800,3640)
+coorWuma_right[10:] = peak_finder_it(WUma_data[10:],2660,3735)
+
+# WUma up -> take this as radius check!!
+coorWuma_up = np.zeros(23,dtype=tuple)
+coorWuma_up[:8] = peak_finder_it(WUma_data[:8],2880,3490)
+coorWuma_up[8:] = peak_finder_it(WUma_data[8:],2840,3650)
+
+# WUma left
+coorWuma_left = np.zeros(23,dtype=tuple)
+coorWuma_left[:10] = peak_finder_it(WUma_data[:10],2800,3470)
+coorWuma_left[10:] = peak_finder_it(WUma_data[10:],2750,3500)
+
+# WUma down
+coorWuma_down = np.zeros(23,dtype=tuple)
+coorWuma_down[:8] = peak_finder_it(WUma_data[:8],2765,3490)
+coorWuma_down[8:] = peak_finder_it(WUma_data[8:],2590,3650)
+
+coorWuma = np.array([coorWuma_left,coorWuma_right,coorWuma_down,coorWuma_up])
+
+# WUmaref right
+coorWumaref_right = np.zeros(23,dtype=tuple)
+coorWumaref_right[:11] = peak_finder_it(WUma_data[:11],760,1035)
+coorWumaref_right[11:] = peak_finder_it(WUma_data[11:],630,1110)
+
+# WUmaref up -> take this as radius check!!
+coorWumaref_up = np.zeros(23,dtype=tuple)
+coorWumaref_up[:11] = peak_finder_it(WUma_data[:11],800,950)
+coorWumaref_up[11:] = peak_finder_it(WUma_data[11:],730,1050)
+
+# WUmaef left
+coorWumaref_left = np.zeros(23,dtype=tuple)
+coorWumaref_left[:11] = peak_finder_it(WUma_data[:11],760,900)
+coorWumaref_left[11:] = peak_finder_it(WUma_data[11:],630,1000)
+
+# WUmaref down
+coorWumaref_down = np.zeros(23,dtype=tuple)
+coorWumaref_down[:11] = peak_finder_it(WUma_data[:11],720,950)
+coorWumaref_down[11:-1] = peak_finder_it(WUma_data[11:-1],590,1050)
+coorWumaref_down[-1] = peak_finder_it(np.array([WUma_data[-1]]),550,1100)[0]
+
+
+coorWumaref = np.array([np.array([coorWumaref_left,coorWumaref_right,coorWumaref_down,coorWumaref_up])])
+
 # coortopleft = peak_finder_it(TVLyn_data,2000,2000)
 coortopleft_down = peak_finder_it(TVLyn_data,2079,2060)
 #print("tld done")
@@ -56,16 +111,20 @@ coorTVLyn_up = peak_finder_it(TVLyn_data,1140,2705)
 coorTVLyn_down = peak_finder_it(TVLyn_data,1090,2713)
 coorTVLyn = np.array([coorTVLyn_left,coorTVLyn_right,coorTVLyn_up,coorTVLyn_down])
 
+
+
 refstarcoor = np.array([coortopleft,coortopright,coorbotleft])
 # photometric calibration
 from Finalizers.photmetric_comparison import photometric_extraction_it, photometric_extraction
 m_TVLyn_list = photometric_extraction_it(TVLyn_data,coorTVLyn,refstarcoor,refmaglist)
+m_WUma = photometric_extraction_it(WUma_data,coorWuma,coorWumaref,refmag_wuma)
+
 
 # light curve plot
-from time_extractor import time_extract
+from time_extractor import time_extract,time_extract_wuma
 import matplotlib.pyplot as plt
+
 time_list = time_extract(headers_10)
-plt.scatter(time_list,m_TVLyn_list)
 
 from scipy import optimize
 time_list_arr = np.zeros(time_list.size)
@@ -73,12 +132,6 @@ for i in np.arange(time_list.size):
     time_list_arr[i] = time_list[i]
 def test_func(x, a, b, c):
     return a * np.sin(b * x) + c
-
-# plt.scatter(time_list_arr/1000,np.ones_like(time_list_arr))
-# plt.scatter(np.array([0.35,0.8,1.4,2,2.7,3.25,4]),np.ones(7),color='orange')
-# plt.grid(which='both')
-# plt.show()
-
 
 p1 = np.where(time_list_arr<350)
 p2 = np.where((time_list_arr<800)&(time_list_arr>350))
@@ -144,18 +197,6 @@ def fit_sin(tt, yy):
     #fitfunc = lambda t: A* np.sin(w*t + p) + c
     return {"amp": A, "omega": w, "phase": p, "offset": c, "freq": f, "period": 1./f, "fitfunc": fitfunc, "maxcov": np.max(pcov), "rawres": (guess,popt,pcov)}
 
-# res = fit_sin(t, D)
-# res = fit_sin(time_list_arr,m_TVLyn_list)
-# print( "Amplitude=%(amp)s, Angular freq.=%(omega)s, phase=%(phase)s, offset=%(offset)s, Max. Cov.=%(maxcov)s" % res )
-
-# plt.plot(t, D, "ok", label="data")
-# tt = np.linspace(0,4500,10000)
-# plt.plot(tt, res["fitfunc"](tt), "r-", label="y fit curve", linewidth=2)
-# plt.legend(loc="best")
-# plt.show()
-
-#print(params)
-#plt.scatter(np.arange(4000,step=10),test_func(np.arange(4000,step=10),params[0],params[1],params[2]))
 
 # skewed sine function:
 def skewsinfunc(t, A, w, p, c, n):
@@ -166,34 +207,74 @@ def skewsinfunc(t, A, w, p, c, n):
         S[k] = (sp.binom(2*n,n-(k+1)))/(sp.binom(2*n,n)) * np.sin((k+1) * w * t + p)/(k+1)
         print(k,": ",(sp.binom(2*n,n-(k+1)))/(sp.binom(2*n,n))/(k+1),(k+1) * w, p)
     return A*np.sum(S,axis=0)+c
-    
-# def fit_skewed_sin(tt, yy):
-#     '''Fit sin to the input time sequence, and return fitting parameters "amp", "omega", "phase", "offset", "freq", "period" and "fitfunc"'''
-#     tt = np.array(tt)
-#     yy = np.array(yy)
-#     ff = np.fft.fftfreq(len(tt), (tt[1]-tt[0]))   # assume uniform spacing
-#     Fyy = abs(np.fft.fft(yy))
-#     guess_freq = abs(ff[np.argmax(Fyy[1:])+1])/2   # excluding the zero frequency "peak", which is related to offset
-#     guess_amp = np.std(yy) * 2.**0.5 *2
-#     guess_offset = np.mean(yy)
-#     guess_n = 10
-#     guess = np.array([guess_amp, 2.*np.pi*guess_freq, 0.,0,guess_n])
-#     #popt, pcov = optimize.curve_fit(sinfunc, tt, yy, p0=guess)
-#     popt, pcov = optimize.curve_fit(skewsinfunc, tt, yy,p0=guess,bounds=(np.array([0,0,10,0,2]),np.array([0.2,0.1,12,0,2000])))
-#     A, w, p, c, n = popt
-#     f = w/(2.*np.pi)
-#     fitfunc = lambda t: skewsinfunc(t,A,w,p,c,n)
-#     return {"amp": A, "omega": w, "phase": p, "offset": c, "freq": f, "period": 1./f,"n": n, "fitfunc": fitfunc, "maxcov": np.max(pcov), "rawres": (guess,popt,pcov)}
 
 # res = fit_skewed_sin(t, D)
 # print( "Amplitude=%(amp)s, Angular freq.=%(omega)s, phase=%(phase)s, offset=%(offset)s, n=%(n)s, Max. Cov.=%(maxcov)s" % res )
 
-plt.plot(t, D, "ok", label="data")
-tt = np.linspace(0,4500,10000)
-plt.plot(tt, skewsinfunc(tt,0.11,0.002,-0.7,11.54,4), "r-", label="y skew fit curve", linewidth=2)
-#plt.plot(tt,0.09*np.sin(0.002*tt-0.7)+11.54)
-#plt.plot(tt, res["fitfunc"](tt), "r-", label="y fit curve", linewidth=2)
+#TV Lyn plot
+#   plot only data:
+plt.scatter(time_list/60/60,m_TVLyn_list,s=15,label="TVLyn Magnitudes")
+plt.scatter(t/60/60, D, s=20,c="black", label="Median data")
+plt.title("TVLyn light curve")
+plt.xlabel("Time t[sec]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.grid()
 plt.legend(loc="best")
 plt.show()
+
+#   sine fit:
+time_list = time_extract(headers_10)
+tt = np.linspace(0,4500,10000)
+tth = tt/60/60
+plt.scatter(time_list/60/60,m_TVLyn_list,s=15,label="TVLyn Magnitudes")
+plt.scatter(t/60/60, D, s=20,c="black", label="Median data")
+plt.plot(tth,0.09*np.sin(0.002*tt-0.7)+11.54,"g-", label="Sine curve fit")
+plt.title("TV Lyn Light Curve")
+plt.xlabel("Time t[hrs]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.grid()
+plt.legend(loc="best")
+plt.show()
+
+#   skewed sine fit:
+time_list = time_extract(headers_10)
+tt = np.linspace(0,4500,10000)
+tth = tt/60/60
+plt.scatter(time_list/60/60,m_TVLyn_list,s=15,label="TVLyn Magnitudes")
+plt.scatter(t/60/60, D, s=20,c="black", label="Median data")
+plt.plot(tth, skewsinfunc(tt,0.11,0.002,-0.7,11.54,4), "r-", label="Skewed-sine curve fit", linewidth=2)
+plt.title("TV Lyn Light Curve")
+plt.xlabel("Time t[hrs]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.grid()
+plt.legend(loc="best")
+plt.show()
+
+#   both sine and skewed sine fit:
+#   sine fit:
+time_list = time_extract(headers_10)
+tt = np.linspace(0,4500,10000)
+tth = tt/60/60
+plt.scatter(time_list/60/60,m_TVLyn_list,s=15,label="TVLyn Magnitudes")
+plt.scatter(t/60/60, D, s=20,c="black", label="Median data")
+plt.plot(tth,0.09*np.sin(0.002*tt-0.7)+11.54,"g-", label="Sine curve fit")
+plt.plot(tth, skewsinfunc(tt,0.11,0.002,-0.7,11.54,4), "r-", label="Skewed-sine curve fit", linewidth=2)
+plt.title("TV Lyn Light Curve")
+plt.xlabel("Time t[hrs]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.grid()
+plt.legend(loc="best")
+plt.show()
+
 # our fit function result is an angular frequency of 0.002 Hz which corresponds
 # to a period of 3141.6 sec or 0.87 hrs
+
+
+# WUma plot:
+time_list_wuma = time_extract_wuma(headers_wuma)
+plt.scatter(time_list_wuma/60/60,m_WUma)
+plt.grid()
+plt.title("W Uma Light Curve")
+plt.xlabel("Time t[hrs]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.show()

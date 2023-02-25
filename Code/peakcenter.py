@@ -30,11 +30,14 @@ def peak_center_zonein(data,corners,borderthickness = 1):
     the function overlays a circular aperture with additional
     border space around the star and sums the photon count from the star.'''
     cornerlist = corners[:-1]
+    #print("zonein",cornerlist)
     cornercheck = corners[-1]
+    #print(cornercheck)
     Mx,My,r = threepointcircledefinition(cornerlist)
     R = np.sqrt((cornercheck[0]-Mx)**2 + (cornercheck[1]-My)**2)
     Rr = np.max(np.array([r,R])) + borderthickness
     #print("Overshoot: ", Rr-r)
+    #print(Mx,My,r,Rr)
     rx,ry = draw.disk((int(Mx+0.5),int(My+0.5)),int(Rr+1),shape=data.shape)
     Totalcount = np.sum(data[rx,ry])
     return Totalcount
