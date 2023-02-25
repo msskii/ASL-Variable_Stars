@@ -234,6 +234,15 @@ plt.xlabel("Time t[hrs]")
 plt.ylabel("Apparent Magnitude m[-]")
 plt.grid()
 plt.legend(loc="best")
+
+sine_fit = lambda t: 0.09*np.sin(0.002*t-0.7)+11.54
+fi = sine_fit(t)
+yi = D
+xi = t
+n = t.size
+Rsq_sinemodel = 1-np.sum((yi-fi)**2)/np.sum((yi-np.sum(yi)/n)**2) 
+Rsq_sinemodel = round(Rsq_sinemodel,3)
+plt.text(0.1,11.95,r'$R^2$ = '+str(Rsq_sinemodel))
 plt.show()
 
 #   skewed sine fit:
@@ -248,6 +257,15 @@ plt.xlabel("Time t[hrs]")
 plt.ylabel("Apparent Magnitude m[-]")
 plt.grid()
 plt.legend(loc="best")
+
+skewed_sine_fit = lambda t: skewsinfunc(t,0.11,0.002,-0.7,11.54,4)
+fi = skewed_sine_fit(t)
+yi = D
+xi = t
+n = t.size
+Rsq_skewmodel = 1-np.sum((yi-fi)**2)/np.sum((yi-np.sum(yi)/n)**2) 
+Rsq_skewmodel = round(Rsq_skewmodel,3)
+plt.text(0.1,11.95,r'$R^2$ = '+str(Rsq_skewmodel))
 plt.show()
 
 #   both sine and skewed sine fit:
