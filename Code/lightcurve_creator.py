@@ -116,9 +116,9 @@ coorTVLyn = np.array([coorTVLyn_left,coorTVLyn_right,coorTVLyn_up,coorTVLyn_down
 refstarcoor = np.array([coortopleft,coortopright,coorbotleft])
 # photometric calibration
 from Finalizers.photmetric_comparison import photometric_extraction_it, photometric_extraction
-m_TVLyn_list = photometric_extraction_it(TVLyn_data,coorTVLyn,refstarcoor,refmaglist)
-m_WUma = photometric_extraction_it(WUma_data,coorWuma,coorWumaref,refmag_wuma)
-
+m_TVLyn_list,stddev_TVLyn_list = photometric_extraction_it(TVLyn_data,coorTVLyn,refstarcoor,refmaglist)
+m_WUma,stddev_WUma_list = photometric_extraction_it(WUma_data,coorWuma,coorWumaref,refmag_wuma)
+print(stddev_TVLyn_list)
 
 # light curve plot
 from time_extractor import time_extract,time_extract_wuma
@@ -145,28 +145,81 @@ p8 = np.where(time_list_arr>4000)
 t1 = np.median(time_list_arr[p1])
 Datap1 = m_TVLyn_list[p1]
 t2 = np.median(time_list_arr[p2])
+i2,j2 = time_list_arr[p2][4],time_list_arr[p2][5]
 Datap2 = m_TVLyn_list[p2]
 t3 = np.median(time_list_arr[p3])
+i3 = time_list_arr[p3][4]
 Datap3 = m_TVLyn_list[p3]
 t4 = np.median(time_list_arr[p4])
+i4,j4 = time_list_arr[p4][4],time_list_arr[p4][5]
 Datap4 = m_TVLyn_list[p4]
 t5 = np.median(time_list_arr[p5])
+i5,j5 = time_list_arr[p5][3],time_list_arr[p5][4]
 Datap5 = m_TVLyn_list[p5]
 t6 = np.median(time_list_arr[p6])
+i6 = time_list_arr[p6][3]
 Datap6 = m_TVLyn_list[p6]
 t7 = np.median(time_list_arr[p7])
+i7,j7 = time_list_arr[p7][4],time_list_arr[p7][5]
 Datap7 = m_TVLyn_list[p7]
 t8 = np.median(time_list_arr[p8])
+i8,j8 = time_list_arr[p8][3],time_list_arr[p8][4]
 Datap8 = m_TVLyn_list[p8]
 
 D1 = np.median(Datap1)
+dataerr1 = stddev_TVLyn_list[p1][4]
 D2 = np.median(Datap2)
+dataerr2 = np.sqrt((stddev_TVLyn_list[p2][4])**2+(stddev_TVLyn_list[p2][5])**2)
 D3 = np.median(Datap3)
+dataerr3 = stddev_TVLyn_list[p3][4]
 D4 = np.median(Datap4)
+dataerr4 = np.sqrt((stddev_TVLyn_list[p4][4])**2+(stddev_TVLyn_list[p4][5])**2)
 D5 = np.median(Datap5)
+dataerr5 = np.sqrt((stddev_TVLyn_list[p5][3])**2+(stddev_TVLyn_list[p5][4])**2)
 D6 = np.median(Datap6)
+dataerr6 = stddev_TVLyn_list[p6][3]
 D7 = np.median(Datap7)
+dataerr7 = np.sqrt((stddev_TVLyn_list[p7][4])**2+(stddev_TVLyn_list[p7][5])**2)
 D8 = np.median(Datap8)
+dataerr8 = np.sqrt((stddev_TVLyn_list[p8][3])**2+(stddev_TVLyn_list[p8][4])**2)
+
+
+wmean1 = np.sum(stddev_TVLyn_list[p1]*Datap1)/np.sum(stddev_TVLyn_list[p1])
+wmean2 = np.sum(stddev_TVLyn_list[p2]*Datap2)/np.sum(stddev_TVLyn_list[p2])
+wmean3 = np.sum(stddev_TVLyn_list[p3]*Datap3)/np.sum(stddev_TVLyn_list[p3])
+wmean4 = np.sum(stddev_TVLyn_list[p4]*Datap4)/np.sum(stddev_TVLyn_list[p4])
+wmean5 = np.sum(stddev_TVLyn_list[p5]*Datap5)/np.sum(stddev_TVLyn_list[p5])
+wmean6 = np.sum(stddev_TVLyn_list[p6]*Datap6)/np.sum(stddev_TVLyn_list[p6])
+wmean7 = np.sum(stddev_TVLyn_list[p7]*Datap7)/np.sum(stddev_TVLyn_list[p7])
+wmean8 = np.sum(stddev_TVLyn_list[p8]*Datap8)/np.sum(stddev_TVLyn_list[p8])
+
+std1 = np.std(Datap1)
+std2 = np.std(Datap2)
+std3 = np.std(Datap3)
+std4 = np.std(Datap4)
+std5 = np.std(Datap5)
+std6 = np.std(Datap6)
+std7 = np.std(Datap7)
+std8 = np.std(Datap8)
+
+wstd1 = std1 * np.sqrt(np.sum((stddev_TVLyn_list[p1]/np.sum(stddev_TVLyn_list[p1]))**2))
+wstd2 = std2 * np.sqrt(np.sum((stddev_TVLyn_list[p2]/np.sum(stddev_TVLyn_list[p2]))**2))
+wstd3 = std3 * np.sqrt(np.sum((stddev_TVLyn_list[p3]/np.sum(stddev_TVLyn_list[p3]))**2))
+wstd4 = std4 * np.sqrt(np.sum((stddev_TVLyn_list[p4]/np.sum(stddev_TVLyn_list[p4]))**2))
+wstd5 = std5 * np.sqrt(np.sum((stddev_TVLyn_list[p5]/np.sum(stddev_TVLyn_list[p5]))**2))
+wstd6 = std6 * np.sqrt(np.sum((stddev_TVLyn_list[p6]/np.sum(stddev_TVLyn_list[p6]))**2))
+wstd7 = std7 * np.sqrt(np.sum((stddev_TVLyn_list[p7]/np.sum(stddev_TVLyn_list[p7]))**2))
+wstd8 = std8 * np.sqrt(np.sum((stddev_TVLyn_list[p8]/np.sum(stddev_TVLyn_list[p8]))**2))
+
+medstd1 = np.sqrt((wstd1 * 1.2533)**2 + dataerr1**2)
+medstd2 = np.sqrt((wstd2 * 1.2533)**2 + dataerr2**2)
+medstd3 = np.sqrt((wstd3 * 1.2533)**2 + dataerr3**2)
+medstd4 = np.sqrt((wstd4 * 1.2533)**2 + dataerr4**2)
+medstd5 = np.sqrt((wstd5 * 1.2533)**2 + dataerr5**2)
+medstd6 = np.sqrt((wstd6 * 1.2533)**2 + dataerr6**2)
+medstd7 = np.sqrt((wstd7 * 1.2533)**2 + dataerr7**2)
+medstd8 = np.sqrt((wstd8 * 1.2533)**2 + dataerr8**2)
+medstd = np.array([medstd1,medstd2,medstd3,medstd4,medstd5,medstd6,medstd7,medstd8])
 
 t = np.array([t1,t2,t3,t4,t5,t6,t7,t8])
 D = np.array([D1,D2,D3,D4,D5,D6,D7,D8])
@@ -213,10 +266,26 @@ def skewsinfunc(t, A, w, p, c, n):
 
 #TV Lyn plot
 #   plot only data:
-plt.scatter(time_list/60/60,m_TVLyn_list,s=15,label="TVLyn Magnitudes")
-plt.scatter(t/60/60, D, s=20,c="black", label="Median data")
+#plt.scatter(time_list/60/60,m_TVLyn_list,s=15,label="TVLyn Magnitudes")
+plt.errorbar(time_list/60/60,m_TVLyn_list,yerr=stddev_TVLyn_list,capsize=2,ls='',elinewidth=0.5,ecolor="black",fmt='ob',ms=3,label="TVLyn Magnitudes")
+#plt.scatter(t/60/60, D, s=30,c="red", label="Median data")
 plt.title("TVLyn light curve")
-plt.xlabel("Time t[sec]")
+plt.xlabel("Time t[hrs]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.grid()
+plt.legend(loc="best")
+plt.show()
+
+#   plot data with medians:
+# approximate error of median as error of weighted mean times 1.2533 according
+# to: https://influentialpoints.com/Training/standard_error_of_median.htm
+# the error of the median is given by the sqrt of the above value squared + the measurement uncertainty/stddeviation of the median element itself squared
+
+#plt.scatter(time_list/60/60,m_TVLyn_list,s=15,label="TVLyn Magnitudes")
+plt.errorbar(time_list/60/60,m_TVLyn_list,yerr=stddev_TVLyn_list,errorevery=2,capsize=2,ls='',elinewidth=0.5,fmt='ob',ms=2,label="TVLyn Magnitudes")
+plt.errorbar(t/60/60, D, ms=3,fmt='or', yerr=medstd,capsize=2,ls='',elinewidth=0.5,label="Median data")
+plt.title("TVLyn light curve")
+plt.xlabel("Time t[hrs]")
 plt.ylabel("Apparent Magnitude m[-]")
 plt.grid()
 plt.legend(loc="best")
@@ -226,8 +295,9 @@ plt.show()
 time_list = time_extract(headers_10)
 tt = np.linspace(0,4500,10000)
 tth = tt/60/60
-plt.scatter(time_list/60/60,m_TVLyn_list,s=15,label="TVLyn Magnitudes")
-plt.scatter(t/60/60, D, s=20,c="black", label="Median data")
+#plt.scatter(time_list/60/60,m_TVLyn_list,s=15,label="TVLyn Magnitudes")
+plt.errorbar(time_list/60/60,m_TVLyn_list,yerr=stddev_TVLyn_list,errorevery=2,capsize=2,ls='',elinewidth=0.5,fmt='ob',ms=2,label="TVLyn Magnitudes")
+plt.errorbar(t/60/60, D, ms=2,fmt='oc', yerr=medstd,capsize=2,ls='',elinewidth=0.5,label="Median data")
 plt.plot(tth,0.09*np.sin(0.002*tt-0.7)+11.54,"g-", label="Sine curve fit")
 plt.title("TV Lyn Light Curve")
 plt.xlabel("Time t[hrs]")
@@ -242,15 +312,16 @@ xi = t
 n = t.size
 Rsq_sinemodel = 1-np.sum((yi-fi)**2)/np.sum((yi-np.sum(yi)/n)**2) 
 Rsq_sinemodel = round(Rsq_sinemodel,3)
-plt.text(0.1,11.95,r'$R^2$ = '+str(Rsq_sinemodel))
+plt.text(0.0,12.41,r'$R^2$ = '+str(Rsq_sinemodel))
 plt.show()
 
 #   skewed sine fit:
 time_list = time_extract(headers_10)
 tt = np.linspace(0,4500,10000)
 tth = tt/60/60
-plt.scatter(time_list/60/60,m_TVLyn_list,s=15,label="TVLyn Magnitudes")
-plt.scatter(t/60/60, D, s=20,c="black", label="Median data")
+#plt.scatter(time_list/60/60,m_TVLyn_list,s=15,label="TVLyn Magnitudes")
+plt.errorbar(time_list/60/60,m_TVLyn_list,yerr=stddev_TVLyn_list,errorevery=2,capsize=2,ls='',elinewidth=0.5,fmt='ob',ms=2,label="TVLyn Magnitudes")
+plt.errorbar(t/60/60, D, ms=2,fmt='oc', yerr=medstd,capsize=2,ls='',elinewidth=0.5,label="Median data")
 plt.plot(tth, skewsinfunc(tt,0.11,0.002,-0.7,11.54,4), "r-", label="Skewed-sine curve fit", linewidth=2)
 plt.title("TV Lyn Light Curve")
 plt.xlabel("Time t[hrs]")
@@ -265,7 +336,7 @@ xi = t
 n = t.size
 Rsq_skewmodel = 1-np.sum((yi-fi)**2)/np.sum((yi-np.sum(yi)/n)**2) 
 Rsq_skewmodel = round(Rsq_skewmodel,3)
-plt.text(0.1,11.95,r'$R^2$ = '+str(Rsq_skewmodel))
+plt.text(0.0,12.41,r'$R^2$ = '+str(Rsq_skewmodel))
 plt.show()
 
 #   both sine and skewed sine fit:
@@ -273,8 +344,9 @@ plt.show()
 time_list = time_extract(headers_10)
 tt = np.linspace(0,4500,10000)
 tth = tt/60/60
-plt.scatter(time_list/60/60,m_TVLyn_list,s=15,label="TVLyn Magnitudes")
-plt.scatter(t/60/60, D, s=20,c="black", label="Median data")
+#plt.scatter(time_list/60/60,m_TVLyn_list,s=15,label="TVLyn Magnitudes")
+plt.errorbar(time_list/60/60,m_TVLyn_list,yerr=stddev_TVLyn_list,errorevery=2,capsize=2,ls='',elinewidth=0.5,fmt='ob',ms=2,label="TVLyn Magnitudes")
+plt.errorbar(t/60/60, D, ms=2,fmt='oc', yerr=medstd,capsize=2,ls='',elinewidth=0.5,label="Median data")
 plt.plot(tth,0.09*np.sin(0.002*tt-0.7)+11.54,"g-", label="Sine curve fit")
 plt.plot(tth, skewsinfunc(tt,0.11,0.002,-0.7,11.54,4), "r-", label="Skewed-sine curve fit", linewidth=2)
 plt.title("TV Lyn Light Curve")
