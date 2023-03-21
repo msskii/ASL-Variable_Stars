@@ -278,7 +278,7 @@ Dgamm = np.array([Dgamm1,Dgamm2,Dgamm3,Dgamm4,Dgamm5,Dgamm6,Dgamm7,Dgamm8])
 
 #params, params_covariance = optimize.curve_fit(test_func, t, D, p0=[0.1, 2*np.pi/8000, 11.52],bounds=(np.array([0.8,1/10000,10]),np.array([1,6/5000,12])))
 
-def fit_sin(tt, yy):
+def fit_sin(tt, yy,numerical_guess=np.array([0.042*1.5,0.003,-0.8,11.5])):
     '''Fit sin to the input time sequence, and return fitting parameters "amp", "omega", "phase", "offset", "freq", "period" and "fitfunc"'''
     tt = np.array(tt)
     yy = np.array(yy)
@@ -288,7 +288,6 @@ def fit_sin(tt, yy):
     guess_amp = np.std(yy) * 2.**0.5
     guess_offset = np.mean(yy)
     guess = np.array([guess_amp, 2.*np.pi*guess_freq, 0., guess_offset])
-    numerical_guess = np.array([0.042*1.5,0.003,-0.8,11.5])
     
     def sinfunc(t, A, w, p, c):  return A * np.sin(w*t + p) + c
     #popt, pcov = optimize.curve_fit(sinfunc, tt, yy, p0=guess)
@@ -304,11 +303,10 @@ def fit_sin(tt, yy):
 
 
 # skewed sine function:
-def fit_skewsin(tt, yy):
+def fit_skewsin(tt, yy,numerical_guess = np.array([0.042*1.5,0.003,0,11.5,4])):
     '''Fits skewed sine to the input time sequence, and return fitting parameters "amp", "omega", "phase", "offset", "freq", "period" and "fitfunc"'''
     tt = np.array(tt)
     yy = np.array(yy)
-    numerical_guess = np.array([0.042*1.5,0.003,0,11.5,4])
     #popt, pcov = optimize.curve_fit(sinfunc, tt, yy, p0=guess)
     popt, pcov = optimize.curve_fit(skewsinfunc, tt, yy, p0=numerical_guess,bounds=(0,np.inf))#,bounds=(np.array([0,1/10000,-1000,10]),np.array([0.2,0.01,1000,12])))
     A, w, p, c, n = popt
@@ -385,9 +383,9 @@ plt.show()
 
 #plt.scatter(time_list/60/60,m_TVLyn_list,s=15,label="TVLyn Magnitudes")
 #plt.errorbar(time_list/60/60,m_TVLyn_list,yerr=stddev_TVLyn_list,capsize=2,ls='',elinewidth=0.5,ecolor="black",fmt='ob',ms=3,label="TVLyn Magnitudes")
-plt.scatter(time_list/60/60,m_TVLyn_list_3stars[:,1],color="blue",s=2,label="TVLyn Magnitudes")
-#plt.scatter(time_list/60/60,m_TVLyn_list_3stars[:,1],color="green",s=2,label="TVLyn Magnitudes")
-#plt.scatter(time_list/60/60,m_TVLyn_list_3stars[:,2],color="red",s=2,label="TVLyn Magnitudes")
+#plt.scatter(time_list/60/60,m_TVLyn_list_3stars[:,0],color="blue",s=2,label="Reference star: TYC 3409-2187-1")
+plt.scatter(time_list/60/60,m_TVLyn_list_3stars[:,1],color="green",s=2,label="TVLyn Magnitudes")
+#plt.scatter(time_list/60/60,m_TVLyn_list_3stars[:,2],color="red",s=2,label="Reference star: HIP 36761")
 # plt.plot(tt/60/60,res1["amp"]*np.sin(res1["omega"]*tt+res1["phase"])+res1["offset"])
 #plt.scatter(t/60/60, D, s=30,c="red", label="Median data")
 plt.title('Reference star: TYC 3409-2474-1',fontsize=10)
@@ -612,4 +610,245 @@ plt.grid()
 plt.title("W Uma Light Curve")
 plt.xlabel("Time t[hrs]")
 plt.ylabel("Apparent Magnitude m[-]")
+plt.show()
+
+
+
+
+# Removing outliers
+# Ref star 1
+st1dat = m_TVLyn_list_3stars[:,0]
+st1avg = np.sum(st1dat)/st1dat.size
+st1std = np.sqrt((np.sum((st1dat-st1avg)**2))/st1dat.size)
+outmsk1 = np.where(np.abs(st1dat-st1avg)>2*st1std)
+# plt.scatter(time_list/60/60,st1dat)
+# plt.scatter(time_list[outmsk1]/60/60,st1dat[outmsk1])
+
+t1 = np.delete(time_list_arr,outmsk1)
+st1rem = np.delete(st1dat,outmsk1)
+plt.scatter(t1/60/60,st1rem,color="blue",s=2,label="TVLyn Magnitudes")
+plt.title('Reference star: TYC 3409-2187-1',fontsize=10)
+plt.suptitle('TV Lyn light curve',fontsize=14, y=0.98)
+plt.xlabel("Time t[hrs]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.grid()
+plt.legend(loc="best")
+plt.show()
+
+# Ref star 2
+st2dat = m_TVLyn_list_3stars[:,1]
+st2avg = np.sum(st2dat)/st2dat.size
+st2std = np.sqrt((np.sum((st2dat-st2avg)**2))/st2dat.size)
+outmsk2 = np.where(np.abs(st2dat-st2avg)>2*st2std)
+# plt.scatter(time_list/60/60,st1dat)
+# plt.scatter(time_list[outmsk1]/60/60,st1dat[outmsk1])
+
+t2 = np.delete(time_list_arr,outmsk2)
+st2rem = np.delete(st2dat,outmsk2)
+plt.scatter(t2/60/60,st2rem,color="blue",s=2,label="TVLyn Magnitudes")
+plt.title('Reference star: TYC 3409-2474-1',fontsize=10)
+plt.suptitle('TV Lyn light curve',fontsize=14, y=0.98)
+plt.xlabel("Time t[hrs]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.grid()
+plt.legend(loc="best")
+plt.show()
+
+# Ref star 3
+st3dat = m_TVLyn_list_3stars[:,2]
+st3avg = np.sum(st3dat)/st3dat.size
+st3std = np.sqrt((np.sum((st3dat-st3avg)**2))/st3dat.size)
+outmsk3 = np.where(np.abs(st3dat-st3avg)>2*st3std)
+# plt.scatter(time_list/60/60,st1dat)
+# plt.scatter(time_list[outmsk1]/60/60,st1dat[outmsk1])
+
+t3 = np.delete(time_list_arr,outmsk3)
+st3rem = np.delete(st3dat,outmsk3)
+plt.scatter(t3/60/60,st3rem,color="blue",s=2,label="TVLyn Magnitudes")
+plt.title('Reference star: HIP 36761',fontsize=10)
+plt.suptitle('TV Lyn light curve',fontsize=14, y=0.98)
+plt.xlabel("Time t[hrs]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.grid()
+plt.legend(loc="best")
+plt.show()
+
+# sine fits without outliers
+res0 = fit_sin(t1, st1rem,numerical_guess=np.array([0.042*1.5,0.002,-0.8,11.5]))
+print("Sine fit star0 ", res0)
+res1 = fit_sin(t2, st2rem)
+print("Sine fit star1 ", res1)
+res2 = fit_sin(t3, st3rem)
+print("Sine fit star2 ", res2)
+
+# plt.plot(tt/60/60,res0["amp"]*np.sin(res0["omega"]*tt+res0["phase"])+res0["offset"],label="Sine fit")
+
+t1 = np.delete(time_list_arr,outmsk1)
+st1rem = np.delete(st1dat,outmsk1)
+plt.scatter(t1/60/60,st1rem,color="blue",s=2,label="TVLyn Magnitudes")
+plt.plot(tt/60/60,res0["amp"]*np.sin(res0["omega"]*tt+res0["phase"])+res0["offset"],label="Sine fit")
+plt.title('Reference star: TYC 3409-2187-1',fontsize=10)
+plt.suptitle('TV Lyn light curve',fontsize=14, y=0.98)
+plt.xlabel("Time t[hrs]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.grid()
+plt.legend(loc="best")
+sine_fit0 = lambda x: res0["amp"]*np.sin(res0["omega"]*x+res0["phase"])+res0["offset"]
+fi = sine_fit0(t1)
+yi = st1rem
+xi = t1
+n = t1.size
+Rsq_skewmodel = 1-np.sum((yi-fi)**2)/np.sum((yi-np.sum(yi)/n)**2) 
+Rsq_skewmodel = round(Rsq_skewmodel,3)
+plt.text(0.0,11.36,r'$R^2$ = '+str(Rsq_skewmodel))
+plt.show()
+
+t2 = np.delete(time_list_arr,outmsk2)
+st2rem = np.delete(st2dat,outmsk2)
+plt.scatter(t2/60/60,st2rem,color="blue",s=2,label="TVLyn Magnitudes")
+plt.plot(tt/60/60,res1["amp"]*np.sin(res1["omega"]*tt+res1["phase"])+res1["offset"],label="Sine fit")
+plt.title('Reference star: TYC 3409-2474-1',fontsize=10)
+plt.suptitle('TV Lyn light curve',fontsize=14, y=0.98)
+plt.xlabel("Time t[hrs]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.grid()
+plt.legend(loc="best")
+sine_fit1 = lambda x: res1["amp"]*np.sin(res1["omega"]*x+res1["phase"])+res1["offset"]
+fi = sine_fit1(t2)
+yi = st2rem
+xi = t2
+n = t2.size
+Rsq_skewmodel = 1-np.sum((yi-fi)**2)/np.sum((yi-np.sum(yi)/n)**2) 
+Rsq_skewmodel = round(Rsq_skewmodel,3)
+plt.text(0.0,12.16,r'$R^2$ = '+str(Rsq_skewmodel))
+plt.show()
+
+t3 = np.delete(time_list_arr,outmsk3)
+st3rem = np.delete(st3dat,outmsk3)
+plt.scatter(t3/60/60,st3rem,color="blue",s=2,label="TVLyn Magnitudes")
+plt.plot(tt/60/60,res2["amp"]*np.sin(res2["omega"]*tt+res2["phase"])+res2["offset"],label="Sine fit")
+plt.title('Reference star: HIP 36761',fontsize=10)
+plt.suptitle('TV Lyn light curve',fontsize=14, y=0.98)
+plt.xlabel("Time t[hrs]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.grid()
+plt.legend(loc="best")
+sine_fit2 = lambda x: res2["amp"]*np.sin(res2["omega"]*x+res2["phase"])+res2["offset"]
+fi = sine_fit2(t3)
+yi = st3rem
+xi = t3
+n = t3.size
+Rsq_skewmodel = 1-np.sum((yi-fi)**2)/np.sum((yi-np.sum(yi)/n)**2) 
+Rsq_skewmodel = round(Rsq_skewmodel,3)
+plt.text(1.0,11.20,r'$R^2$ = '+str(Rsq_skewmodel))
+plt.show()
+
+# skewed sine fits without outliers
+def skewcpct(t, res):
+    A,w,p,c,n = res["amp"],res["omega"],res["phase"],res["offset"],res["n"]
+    return skewsinfunc(t,A,w,p,c,n)
+
+res0 = fit_skewsin(t1, st1rem,numerical_guess = np.array([0.042*2,0.002,0,11.5,4]))
+print("Skew fit star0 ", res0)
+res1 = fit_skewsin(t2, st2rem,numerical_guess = np.array([0.042*2,0.002,0,11.5,4]))
+print("Skew fit star1 ", res1)
+res2 = fit_skewsin(t3, st3rem,numerical_guess = np.array([0.042*2,0.002,0,11.5,4]))
+print("Skew fit star2 ", res2)
+
+t1 = np.delete(time_list_arr,outmsk1)
+st1rem = np.delete(st1dat,outmsk1)
+plt.scatter(t1/60/60,st1rem,color="blue",s=2,label="TVLyn Magnitudes")
+plt.plot(tt/60/60,skewcpct(tt,res0),label="Skewed sine fit")
+plt.title('Reference star: TYC 3409-2187-1',fontsize=10)
+plt.suptitle('TV Lyn light curve',fontsize=14, y=0.98)
+plt.xlabel("Time t[hrs]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.grid()
+plt.legend(loc="best")
+skew_fit0 = lambda x: skewcpct(x,res0)
+fi = skew_fit0(t1)
+yi = st1rem
+xi = t1
+n = t1.size
+Rsq_skewmodel = 1-np.sum((yi-fi)**2)/np.sum((yi-np.sum(yi)/n)**2) 
+Rsq_skewmodel = round(Rsq_skewmodel,3)
+plt.text(0.0,11.36,r'$R^2$ = '+str(Rsq_skewmodel))
+plt.show()
+
+t2 = np.delete(time_list_arr,outmsk2)
+st2rem = np.delete(st2dat,outmsk2)
+plt.scatter(t2/60/60,st2rem,color="blue",s=2,label="TVLyn Magnitudes")
+plt.plot(tt/60/60,skewcpct(tt,res1),label="Skewed sine fit")
+plt.title('Reference star: TYC 3409-2474-1',fontsize=10)
+plt.suptitle('TV Lyn light curve',fontsize=14, y=0.98)
+plt.xlabel("Time t[hrs]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.grid()
+plt.legend(loc="best")
+skew_fit1 = lambda x: skewcpct(x,res1)
+fi = skew_fit1(t2)
+yi = st2rem
+xi = t2
+n = t2.size
+Rsq_skewmodel = 1-np.sum((yi-fi)**2)/np.sum((yi-np.sum(yi)/n)**2) 
+Rsq_skewmodel = round(Rsq_skewmodel,3)
+plt.text(0.0,12.16,r'$R^2$ = '+str(Rsq_skewmodel))
+plt.show()
+
+t3 = np.delete(time_list_arr,outmsk3)
+st3rem = np.delete(st3dat,outmsk3)
+plt.scatter(t3/60/60,st3rem,color="blue",s=2,label="TVLyn Magnitudes")
+plt.plot(tt/60/60,skewcpct(tt,res2),label="Skewed sine fit")
+plt.title('Reference star: HIP 36761',fontsize=10)
+plt.suptitle('TV Lyn light curve',fontsize=14, y=0.98)
+plt.xlabel("Time t[hrs]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.grid()
+plt.legend(loc="best")
+skew_fit2 = lambda x: skewcpct(x,res2)
+fi = skew_fit2(t3)
+yi = st3rem
+xi = t3
+n = t3.size
+Rsq_skewmodel = 1-np.sum((yi-fi)**2)/np.sum((yi-np.sum(yi)/n)**2) 
+Rsq_skewmodel = round(Rsq_skewmodel,3)
+plt.text(1.0,11.20,r'$R^2$ = '+str(Rsq_skewmodel))
+plt.show()
+
+#Increasing aperture size
+st3datbig = m_3star_bigbox[:,2]
+st3avgbig = np.sum(st3datbig)/st3datbig.size
+st3stdbig = np.sqrt((np.sum((st3datbig-st3avgbig)**2))/st3datbig.size)
+outmsk3big = np.where(np.abs(st3datbig-st3avgbig)>2*st3stdbig)
+
+t3big = np.delete(time_list_arr,outmsk3big)
+st3rembig = np.delete(st3datbig,outmsk3big)
+plt.scatter(t3big/60/60,st3rembig,color="blue",s=2,label="Aperture increase by 10 pixels")
+plt.scatter(t1/60/60,st1rem,color="red",s=2,label="TVLyn Magnitudes")
+plt.title('Reference star: TYC 3409-2187-1',fontsize=10)
+plt.suptitle('TV Lyn light curve',fontsize=14, y=0.98)
+plt.xlabel("Time t[hrs]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.grid()
+plt.legend(loc="best")
+plt.show()
+
+res2big = fit_sin(t3big,st3rembig,numerical_guess=np.array([0.042*1.5,0.001,-0.8,11.5]))
+print("Sine fit star2bigap ", res2big)
+plt.scatter(t3big/60/60,st3rembig,color="blue",s=2,label="TVLyn Magnitudes")
+plt.plot(tt/60/60,res2big["amp"]*np.sin(res2big["omega"]*tt+res2big["phase"])+res2big["offset"],label="Sine fit")
+plt.title('Reference star: HIP 36761',fontsize=10)
+plt.suptitle('TV Lyn light curve',fontsize=14, y=0.98)
+plt.xlabel("Time t[hrs]")
+plt.ylabel("Apparent Magnitude m[-]")
+plt.grid()
+plt.legend(loc="best")
+sine_fit2big = lambda x: res2big["amp"]*np.sin(res2big["omega"]*x+res2big["phase"])+res2big["offset"]
+fi = sine_fit2big(t3big)
+yi = st3rembig
+xi = t3big
+n = t3big.size
+Rsq_skewmodel = 1-np.sum((yi-fi)**2)/np.sum((yi-np.sum(yi)/n)**2) 
+Rsq_skewmodel = round(Rsq_skewmodel,3)
+plt.text(0.5,11.24,r'$R^2$ = '+str(Rsq_skewmodel))
 plt.show()
